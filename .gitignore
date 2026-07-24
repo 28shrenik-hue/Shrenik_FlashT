@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+.pytest_cache/
+dist/
+build/
+*.spec
+database/excel/*.xlsx
+!database/excel/.gitkeep
+

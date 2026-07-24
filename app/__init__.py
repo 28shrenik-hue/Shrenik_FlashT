@@ -1,0 +1,2 @@
+"""FlashTile application package."""
+
