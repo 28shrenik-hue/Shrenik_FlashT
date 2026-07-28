@@ -1,0 +1,82 @@
+# FlashTile — Tile-First Learning Engine
+
+**Knowledge that finds you.**
+
+FlashTile is a small, always-on-top desktop micro-learning tile built with Python,
+PySide6/QML, and a replaceable Excel persistence layer. It intentionally does not
+expand into a conventional full-screen application.
+
+## v1.0 release-candidate experience
+
+- One fixed 430 × 730 floating tile
+- Original 3D liquid-glass FlashTile logo integrated into the compact header
+- Premium glass styling and mouse-position swivel
+- Three flagship learning topics: AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust
+- Continuous curated lessons with no daily stopping point
+- Structured Core Concept → Practical Scenario → Go Deeper → Knowledge Check → Completion lessons
+- XP and streak persistence in a local Excel workbook
+- Per-lesson bookmarks and 500-character Quick Notes stored locally
+- Saved Review list, confidence check, spaced recall scheduling, and concept mastery
+- Optional in-tile 60-second breathing reset with no wellness data collection
+- Primary-screen-safe startup positioning on multi-monitor Macs and PCs
+- Restrained perspective slide, depth scale, light sweep, and background parallax between flashes
+- No dashboard, sidebar, social feed, or full-screen navigation
+
+## Run on macOS
+
+Control-click `scripts/run_mac.command`, choose **Open**, and allow the first-time dependency installation.
+
+Or run:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python main.py
+```
+
+## Run on Windows
+
+Double-click `scripts\run_windows.bat`. Install Python 3.12 first and select **Add Python to PATH** during installation.
+
+## Test
+
+```bash
+python self_check.py
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
+Progress is stored locally at `~/.flashtile/FlashTile.xlsx`; it is never committed.
+Daily workbook backups are stored in `~/.flashtile/backups/`, and rotating logs
+are written to `~/.flashtile/logs/FlashTile.log`.
+No confidential or customer data should be entered into the app.
+
+## Build the portable Windows package
+
+On Windows, run:
+
+```text
+scripts\build_windows.bat
+```
+
+The no-Python-required package is created at:
+
+```text
+release\FlashTile-v1.0.0-rc12-win64.zip
+```
+
+The same build can run from the **Windows release package** GitHub Actions
+workflow.
+
+## Repository layout
+
+- `app/` application startup
+- `ui/qml/` desktop interface
+- `services/` learning and Excel persistence
+- `models/` domain models
+- `docs/` capstone vision, proposal, and roadmap
+- `tests/` automated tests
+- `scripts/` macOS and Windows launchers
+- `self_check.py` release diagnostics
+- `FlashTile.spec` portable Windows packaging
