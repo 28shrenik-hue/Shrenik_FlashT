@@ -20,4 +20,9 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
       - run: python -m pytest -q
-      - run: python self_check.py
+      - name: Run full desktop UI self-check
+        if: runner.os != 'Linux'
+        run: python self_check.py
+      - name: Run Linux headless integrity self-check
+        if: runner.os == 'Linux'
+        run: python self_check.py --quick
