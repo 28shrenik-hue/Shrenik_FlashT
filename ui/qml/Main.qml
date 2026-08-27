@@ -139,10 +139,10 @@ ApplicationWindow {
                         text: "?"
                         flat: true
                         Layout.preferredWidth: 25
-                        Accessible.name: "Start guided demo tour"
+                        Accessible.name: "Start Guided Tour"
                         onClicked: tourPopup.open()
                         ToolTip.visible: hovered
-                        ToolTip.text: "Guided Demo Tour"
+                        ToolTip.text: "Guided Tour"
                         ToolTip.delay: 450
                         contentItem: Text {
                             text: parent.text; color: "#B8AFFF"; font.bold: true; font.pixelSize: 15
@@ -1977,7 +1977,7 @@ ApplicationWindow {
         contentItem: ColumnLayout {
             spacing: 14
             RowLayout { Layout.fillWidth: true
-                Text { text: "GUIDED JUDGE TOUR"; color: "#B8AFFF"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.3 }
+                Text { text: "GUIDED TOUR"; color: "#B8AFFF"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.3 }
                 Item { Layout.fillWidth: true }
                 Text { text: learningService.tourProgressText; color: "#AFC1DD"; font.pixelSize: 11 }
             }

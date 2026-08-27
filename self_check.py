@@ -105,7 +105,7 @@ def check_data_and_learning() -> None:
             if len(learning.badgeItems) != 6 or learning.searchResultCount != 15:
                 raise RuntimeError("Progress, badges, or lesson search is incomplete")
             if learning.tourCount != 7 or not learning.tourTitle:
-                raise RuntimeError("Guided demo tour is incomplete")
+                raise RuntimeError("Guided Tour is incomplete")
             for lessons in learning_service.LESSONS.values():
                 for lesson in lessons:
                     if not all(

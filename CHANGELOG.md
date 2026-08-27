@@ -5,7 +5,7 @@
 - Added Personal Progress with overall and per-topic completion, mastery, due-review, XP, and streak metrics.
 - Added six milestone-based achievement badges.
 - Added a searchable index across all fifteen lessons.
-- Added a seven-step guided judge tour with an F1 shortcut.
+- Added a seven-step Guided Tour with an F1 shortcut.
 - Added a confirmed Demo Reset that creates a timestamped workbook backup before clearing local learning data.
 - Added a weekly Team Board challenge and shared badge reward.
 - Added visible authoritative source labels and links to all twelve Daily Discovery cards.

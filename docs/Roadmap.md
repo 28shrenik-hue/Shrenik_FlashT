@@ -16,7 +16,7 @@
 4. Added reduced-motion support and keyboard shortcuts for core tools.
 5. Added an offline, date-rotating Daily Discovery surface with named footer controls.
 6. Added a clearly labeled Team Board capability demo without exposing private learning data.
-7. Added personal progress, achievement badges, lesson search, and a guided judge tour.
+7. Added personal progress, achievement badges, lesson search, and a Guided Tour.
 8. Added safe Demo Reset with a timestamped workbook backup.
 9. Added official source links to every Daily Discovery card and a weekly team challenge.
 

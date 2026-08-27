@@ -39,7 +39,7 @@ Windows, then verify:
 - Clicking XP opens Personal Progress with accurate overall and per-topic metrics.
 - Achievement Badges displays six badges and unlocks First Step after one completion.
 - Lesson Search finds lessons by title, topic, or description and opens the result.
-- The `?` control starts a complete seven-step guided judge tour.
+- The `?` control starts a complete seven-step Guided Tour.
 - Every Daily Discovery card displays a named source link.
 - Demo Reset requires confirmation, creates a timestamped backup, and clears demo activity.
 
@@ -56,7 +56,7 @@ Windows, then verify:
 - No text or controls are clipped at any learning stage.
 - The experience remains usable with the trackpad and keyboard.
 - Reduced motion disables swivel, card transitions, pulses, and breathing-circle scaling.
-- `Ctrl+G`, `Ctrl+B`, `Ctrl+N`, `Ctrl+D`, `Ctrl+T`, `Ctrl+F`, and `Ctrl+P` open their matching tools; `F1` opens the judge tour.
+- `Ctrl+G`, `Ctrl+B`, `Ctrl+N`, `Ctrl+D`, `Ctrl+T`, `Ctrl+F`, and `Ctrl+P` open their matching tools; `F1` opens the Guided Tour.
 
 Record the operating system, display scaling, pass/fail item, and a screenshot or
 log excerpt for every issue.
