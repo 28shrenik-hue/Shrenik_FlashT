@@ -9,7 +9,8 @@
 - Added a confirmed Demo Reset that creates a timestamped workbook backup before clearing local learning data.
 - Added a weekly Team Board challenge and shared badge reward.
 - Added visible authoritative source labels and links to all twelve Daily Discovery cards.
-- Preserved the approved five-button footer and fixed 430 × 730 tile.
+- Preserved the approved five-button footer and fixed tile-first layout.
+- Refined the tile to a more desktop-friendly 410 × 690 while preserving content readability.
 - Expanded automated regression coverage to 25 tests.
 
 ## 1.0.0-rc13.3 — Judge Demo Roster

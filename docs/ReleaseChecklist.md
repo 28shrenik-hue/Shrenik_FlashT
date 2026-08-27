@@ -3,7 +3,7 @@
 - [x] Python compilation
 - [x] Automated service and persistence tests
 - [x] Offscreen QML load
-- [x] Frozen 430 × 730 geometry
+- [x] Compact 410 × 690 geometry
 - [x] Branding asset integrity
 - [x] Workbook backup and corrupt-file recovery
 - [x] macOS launcher preflight

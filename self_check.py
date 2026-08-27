@@ -150,7 +150,7 @@ def check_qml() -> None:
             if not engine.rootObjects():
                 raise RuntimeError("QML did not create a root window")
             window = engine.rootObjects()[0]
-            if (window.width(), window.height()) != (430, 730):
+            if (window.width(), window.height()) != (410, 690):
                 raise RuntimeError(
                     f"Unexpected tile size: {window.width()}x{window.height()}"
                 )
@@ -172,7 +172,7 @@ def main() -> int:
     report("Required files and branding", check_files)
     report("Workbook, backup, and learning services", check_data_and_learning)
     if not args.quick:
-        report("QML load and frozen 430x730 geometry", check_qml)
+        report("QML load and compact 410x690 geometry", check_qml)
     print("FlashTile self-check complete.")
     return 0
 

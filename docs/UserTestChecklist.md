@@ -7,7 +7,7 @@ Windows, then verify:
 
 - The self-check reports PASS and the tile opens.
 - The tile appears on the primary display near the upper-right.
-- Its size remains 430 × 730 and it never expands full screen.
+- Its size remains 410 × 690 and it never expands full screen.
 - The liquid-glass logo, wordmark, XP, streak, and close control are visible.
 - The tile can be dragged and remains above ordinary windows.
 

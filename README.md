@@ -8,7 +8,7 @@ expand into a conventional full-screen application.
 
 ## v1.0 release-candidate experience
 
-- One fixed 430 × 730 floating tile
+- One compact fixed 410 × 690 floating tile
 - Original 3D liquid-glass FlashTile logo integrated into the compact header
 - Premium glass styling and mouse-position swivel
 - Fifteen curated lessons across AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust

@@ -5,12 +5,12 @@ import QtQuick.Window
 
 ApplicationWindow {
     id: window
-    width: 430
-    height: 730
-    minimumWidth: 430
-    maximumWidth: 430
-    minimumHeight: 730
-    maximumHeight: 730
+    width: 410
+    height: 690
+    minimumWidth: 410
+    maximumWidth: 410
+    minimumHeight: 690
+    maximumHeight: 690
     visible: true
     title: "FlashTile"
     color: "transparent"
@@ -80,8 +80,8 @@ ApplicationWindow {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 22
-            spacing: 13
+            anchors.margins: 18
+            spacing: 10
 
             Item {
                 Layout.fillWidth: true
@@ -95,7 +95,7 @@ ApplicationWindow {
 
                 RowLayout {
                     anchors.fill: parent
-                    spacing: 8
+                    spacing: 6
                     Rectangle {
                         Layout.preferredWidth: 40
                         Layout.preferredHeight: 40
