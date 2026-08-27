@@ -88,3 +88,24 @@ def test_corrupt_workbook_is_preserved_and_rebuilt(tmp_path: Path) -> None:
     assert store.selected_topic() == "AWS & Cloud"
     assert workbook.exists()
     assert len(list(tmp_path.glob("test.corrupt-*.xlsx"))) == 1
+
+
+def test_progress_summary_and_safe_demo_reset(tmp_path: Path) -> None:
+    store = ExcelService(tmp_path / "test.xlsx")
+    store.complete("AWS & Cloud", "Regions", 25)
+    store.complete("AWS & Cloud", "Regions • Recall", 10)
+    store.set_bookmarked("AWS & Cloud", "Regions", True)
+    store.save_lesson_note("AWS & Cloud", "Regions", "Remember isolation.")
+
+    summary = store.progress_summary(15)
+    assert summary["completed"] == 1
+    assert summary["bookmarks"] == 1
+    assert summary["notes"] == 1
+    assert summary["topic_counts"] == {"AWS & Cloud": 1}
+
+    backup = store.reset_demo_data()
+    assert backup.exists()
+    assert "demo-reset" in backup.name
+    assert store.progress_summary(15)["completed"] == 0
+    assert store.bookmarks() == []
+    assert store.notes() == []

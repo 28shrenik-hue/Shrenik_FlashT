@@ -86,6 +86,8 @@ def check_data_and_learning() -> None:
                     learning.dailyDiscoveryTitle,
                     learning.dailyDiscoveryBody,
                     learning.dailyDiscoveryContext,
+                    learning.dailyDiscoverySource,
+                    learning.dailyDiscoverySourceUrl,
                 ]
             ):
                 raise RuntimeError("Daily Discovery content is incomplete")
@@ -96,9 +98,14 @@ def check_data_and_learning() -> None:
                     learning.teamXp,
                     learning.teamStreak,
                     len(learning.teamMemberItems) == 6,
+                    learning.teamChallenge,
                 ]
             ):
                 raise RuntimeError("Team Board demo data is incomplete")
+            if len(learning.badgeItems) != 6 or learning.searchResultCount != 15:
+                raise RuntimeError("Progress, badges, or lesson search is incomplete")
+            if learning.tourCount != 7 or not learning.tourTitle:
+                raise RuntimeError("Guided demo tour is incomplete")
             for lessons in learning_service.LESSONS.values():
                 for lesson in lessons:
                     if not all(

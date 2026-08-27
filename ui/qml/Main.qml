@@ -119,8 +119,37 @@ ApplicationWindow {
                         Text { text: "Knowledge that finds you."; color: "#7F96B8"; font.pixelSize: 11 }
                     }
                     Item { Layout.fillWidth: true }
-                    Text { text: "⚡ " + learningService.xp; color: "#83E8FF"; font.bold: true }
+                    Button {
+                        text: "⚡ " + learningService.xp
+                        flat: true
+                        Layout.preferredWidth: 46
+                        Accessible.name: "Open Personal Progress"
+                        onClicked: progressPopup.open()
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Personal Progress"
+                        ToolTip.delay: 450
+                        contentItem: Text {
+                            text: parent.text; color: "#83E8FF"; font.bold: true; font.pixelSize: 12
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
                     Text { text: "🔥 " + learningService.streak; color: "#FFCB68"; font.bold: true }
+                    Button {
+                        text: "?"
+                        flat: true
+                        Layout.preferredWidth: 25
+                        Accessible.name: "Start guided demo tour"
+                        onClicked: tourPopup.open()
+                        ToolTip.visible: hovered
+                        ToolTip.text: "Guided Demo Tour"
+                        ToolTip.delay: 450
+                        contentItem: Text {
+                            text: parent.text; color: "#B8AFFF"; font.bold: true; font.pixelSize: 15
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
+                    }
                     Button {
                         id: teamButton
                         text: "👥"
@@ -154,16 +183,34 @@ ApplicationWindow {
                 }
             }
 
-            ComboBox {
+            RowLayout {
                 Layout.fillWidth: true
-                model: learningService.topics
-                currentIndex: model.indexOf(learningService.topic)
-                Accessible.name: "Learning topic"
-                onActivated: {
-                    selectedAnswer = -1
-                    flowStep = 0
-                    feedbackText = ""
-                    learningService.selectTopic(currentText)
+                spacing: 8
+                ComboBox {
+                    Layout.fillWidth: true
+                    model: learningService.topics
+                    currentIndex: model.indexOf(learningService.topic)
+                    Accessible.name: "Learning topic"
+                    onActivated: {
+                        selectedAnswer = -1
+                        flowStep = 0
+                        feedbackText = ""
+                        learningService.selectTopic(currentText)
+                    }
+                }
+                Button {
+                    text: "⌕"
+                    Layout.preferredWidth: 42
+                    Accessible.name: "Search lessons"
+                    onClicked: searchPopup.open()
+                    ToolTip.visible: hovered
+                    ToolTip.text: "Lesson Search"
+                    ToolTip.delay: 450
+                    contentItem: Text {
+                        text: parent.text; color: "#83E8FF"; font.pixelSize: 21; font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
                 }
             }
 
@@ -957,9 +1004,10 @@ ApplicationWindow {
             }
             Text {
                 Layout.fillWidth: true
-                text: "A preview of shared learning progress and recognition."
+                text: learningService.teamChallenge
                 color: "#AFC1DD"
                 font.pixelSize: 11
+                font.bold: true
                 wrapMode: Text.WordWrap
             }
             RowLayout {
@@ -1003,7 +1051,7 @@ ApplicationWindow {
             RowLayout {
                 Layout.fillWidth: true
                 Text {
-                    text: "Weekly team goal"
+                    text: "WEEKLY CHALLENGE"
                     color: "#D5E8F3"
                     font.pixelSize: 11
                     font.bold: true
@@ -1030,6 +1078,13 @@ ApplicationWindow {
                         GradientStop { position: 1; color: "#5B6EE1" }
                     }
                 }
+            }
+            Text {
+                Layout.fillWidth: true
+                text: learningService.teamChallengeReward
+                color: "#FFCB68"
+                font.pixelSize: 9
+                horizontalAlignment: Text.AlignHCenter
             }
             Text {
                 text: "WEEKLY CONTRIBUTORS"
@@ -1391,7 +1446,7 @@ ApplicationWindow {
         objectName: "discoveryPopup"
         anchors.centerIn: Overlay.overlay
         width: 360
-        height: 380
+        height: 420
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape
@@ -1468,12 +1523,22 @@ ApplicationWindow {
                 }
             }
             Item { Layout.fillHeight: true }
-            Text {
+            Button {
                 Layout.fillWidth: true
-                text: "Curated offline • changes daily"
-                color: "#7F96B8"
-                font.pixelSize: 10
-                horizontalAlignment: Text.AlignHCenter
+                Layout.preferredHeight: 34
+                text: "Source: " + learningService.dailyDiscoverySource + "  ↗"
+                flat: true
+                Accessible.name: "Open source from " + learningService.dailyDiscoverySource
+                onClicked: Qt.openUrlExternally(learningService.dailyDiscoverySourceUrl)
+                contentItem: Text {
+                    text: parent.text
+                    color: "#83E8FF"
+                    font.pixelSize: 10
+                    font.bold: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
             }
             RowLayout {
                 Layout.fillWidth: true
@@ -1756,6 +1821,207 @@ ApplicationWindow {
     }
 
     Popup {
+        id: progressPopup
+        objectName: "progressPopup"
+        anchors.centerIn: Overlay.overlay
+        width: 370
+        height: 510
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape
+        padding: 22
+        background: Rectangle {
+            radius: 26; border.width: 1; border.color: "#3C78A5"
+            gradient: Gradient {
+                GradientStop { position: 0; color: "#15364C" }
+                GradientStop { position: 1; color: "#11172F" }
+            }
+        }
+        contentItem: ColumnLayout {
+            spacing: 11
+            Text { Layout.fillWidth: true; text: "PERSONAL PROGRESS"; color: "#83E8FF"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.5; horizontalAlignment: Text.AlignHCenter }
+            Text { Layout.fillWidth: true; text: learningService.progressCompleted + " of " + learningService.progressTotal + " lessons completed"; color: "white"; font.pixelSize: 20; font.bold: true; horizontalAlignment: Text.AlignHCenter }
+            Rectangle {
+                Layout.fillWidth: true; Layout.preferredHeight: 10; radius: 5; color: "#26354F"
+                Rectangle { width: parent.width * learningService.progressPercent / 100; height: parent.height; radius: 5; color: "#5CE1FF" }
+            }
+            Text { Layout.fillWidth: true; text: learningService.progressPercent + "% overall"; color: "#AFC1DD"; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter }
+            RowLayout {
+                Layout.fillWidth: true; spacing: 7
+                Repeater {
+                    model: [[learningService.xp, "XP"], [learningService.streak, "DAY STREAK"], [learningService.progressMastered, "MASTERED"], [learningService.progressDueReviews, "DUE"]]
+                    Rectangle {
+                        required property var modelData
+                        Layout.fillWidth: true; Layout.preferredHeight: 58; radius: 11; color: "#10243A"; border.color: "#345B67"
+                        Column { anchors.centerIn: parent; spacing: 2
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData[0]; color: "white"; font.pixelSize: 16; font.bold: true }
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData[1]; color: "#7FAAAE"; font.pixelSize: 8; font.bold: true }
+                        }
+                    }
+                }
+            }
+            Text { text: "TOPIC PROGRESS"; color: "#7FAAAE"; font.pixelSize: 9; font.bold: true; font.letterSpacing: 1.1 }
+            Repeater {
+                model: learningService.progressTopicItems
+                ColumnLayout {
+                    required property string modelData
+                    property var fields: modelData.split("|")
+                    Layout.fillWidth: true; spacing: 4
+                    RowLayout { Layout.fillWidth: true
+                        Text { text: fields[0]; color: "#DCE8F8"; font.pixelSize: 11 }
+                        Item { Layout.fillWidth: true }
+                        Text { text: fields[1] + " / " + fields[2]; color: "#83E8FF"; font.pixelSize: 10; font.bold: true }
+                    }
+                    Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 6; radius: 3; color: "#26354F"
+                        Rectangle { width: parent.width * Number(fields[1]) / Math.max(1, Number(fields[2])); height: parent.height; radius: 3; color: "#8175FF" }
+                    }
+                }
+            }
+            Item { Layout.fillHeight: true }
+            Button {
+                Layout.fillWidth: true; Layout.preferredHeight: 42
+                text: "Achievement Badges  •  " + learningService.unlockedBadgeCount + " / 6"
+                onClicked: { progressPopup.close(); achievementsPopup.open() }
+            }
+            RowLayout { Layout.fillWidth: true; spacing: 8
+                Button { Layout.fillWidth: true; Layout.preferredHeight: 40; text: "Reset Demo"; onClicked: demoResetPopup.open() }
+                Button { Layout.fillWidth: true; Layout.preferredHeight: 40; text: "Close"; onClicked: progressPopup.close() }
+            }
+        }
+    }
+
+    Popup {
+        id: achievementsPopup
+        objectName: "achievementsPopup"
+        anchors.centerIn: Overlay.overlay
+        width: 370; height: 560; modal: true; focus: true; closePolicy: Popup.CloseOnEscape; padding: 22
+        background: Rectangle {
+            radius: 26; border.width: 1; border.color: "#7466C9"
+            gradient: Gradient { GradientStop { position: 0; color: "#2A204D" } GradientStop { position: 1; color: "#11172F" } }
+        }
+        contentItem: ColumnLayout {
+            spacing: 10
+            Text { Layout.fillWidth: true; text: "ACHIEVEMENT BADGES"; color: "#B8AFFF"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.5; horizontalAlignment: Text.AlignHCenter }
+            Text { Layout.fillWidth: true; text: learningService.unlockedBadgeCount + " of 6 unlocked"; color: "white"; font.pixelSize: 21; font.bold: true; horizontalAlignment: Text.AlignHCenter }
+            ListView {
+                id: badgeList; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 7; model: learningService.badgeItems
+                delegate: Rectangle {
+                    required property string modelData
+                    property var fields: modelData.split("|")
+                    width: badgeList.width; height: 62; radius: 13
+                    color: fields[3] === "1" ? "#183D45" : "#151B2D"
+                    border.color: fields[3] === "1" ? "#68EDC6" : "#3A435B"
+                    opacity: fields[3] === "1" ? 1 : 0.67
+                    RowLayout { anchors.fill: parent; anchors.margins: 10; spacing: 10
+                        Rectangle { Layout.preferredWidth: 38; Layout.preferredHeight: 38; radius: 19; color: fields[3] === "1" ? "#245B57" : "#252A3B"
+                            Text { anchors.centerIn: parent; text: fields[3] === "1" ? fields[0] : "•"; color: fields[3] === "1" ? "#FFCB68" : "#65708A"; font.pixelSize: 18; font.bold: true }
+                        }
+                        Column { Layout.fillWidth: true; spacing: 3
+                            Text { text: fields[1]; color: fields[3] === "1" ? "white" : "#A2ADC2"; font.pixelSize: 13; font.bold: true }
+                            Text { text: fields[2]; color: "#8FA5C2"; font.pixelSize: 10 }
+                        }
+                        Text { text: fields[3] === "1" ? "UNLOCKED" : "LOCKED"; color: fields[3] === "1" ? "#68EDC6" : "#65708A"; font.pixelSize: 8; font.bold: true }
+                    }
+                }
+            }
+            Button { Layout.fillWidth: true; Layout.preferredHeight: 40; text: "Back to Progress"; onClicked: { achievementsPopup.close(); progressPopup.open() } }
+        }
+    }
+
+    Popup {
+        id: searchPopup
+        objectName: "searchPopup"
+        anchors.centerIn: Overlay.overlay
+        width: 370; height: 540; modal: true; focus: true; closePolicy: Popup.CloseOnEscape; padding: 22
+        onOpened: { lessonSearch.text = ""; learningService.searchLessons(""); lessonSearch.forceActiveFocus() }
+        background: Rectangle {
+            radius: 26; border.width: 1; border.color: "#3C78A5"
+            gradient: Gradient { GradientStop { position: 0; color: "#15364C" } GradientStop { position: 1; color: "#11172F" } }
+        }
+        contentItem: ColumnLayout {
+            spacing: 10
+            Text { Layout.fillWidth: true; text: "LESSON SEARCH"; color: "#83E8FF"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.5; horizontalAlignment: Text.AlignHCenter }
+            TextField {
+                id: lessonSearch; Layout.fillWidth: true; placeholderText: "Search all 15 lessons…"; Accessible.name: "Search all lessons"
+                onTextChanged: learningService.searchLessons(text)
+            }
+            Text { text: learningService.searchResultCount + " result" + (learningService.searchResultCount === 1 ? "" : "s"); color: "#8FA5C2"; font.pixelSize: 10 }
+            ListView {
+                id: searchResultList; Layout.fillWidth: true; Layout.fillHeight: true; clip: true; spacing: 6; model: learningService.searchLessonItems
+                delegate: Button {
+                    required property string modelData; required property int index
+                    property var fields: modelData.split("|")
+                    width: searchResultList.width; height: 52
+                    onClicked: { learningService.openSearchResult(index); flowStep = 0; selectedAnswer = -1; feedbackText = "Lesson opened from search."; searchPopup.close() }
+                    background: Rectangle { radius: 12; color: parent.hovered ? "#183954" : "#101D34"; border.color: parent.hovered ? "#5CE1FF" : "#354761" }
+                    contentItem: Column { leftPadding: 11; topPadding: 7
+                        Text { text: fields[1]; color: "white"; font.pixelSize: 12; font.bold: true }
+                        Text { text: fields[0]; color: "#8FA5C2"; font.pixelSize: 10 }
+                    }
+                }
+            }
+            Button { Layout.fillWidth: true; Layout.preferredHeight: 40; text: "Close"; onClicked: searchPopup.close() }
+        }
+    }
+
+    Popup {
+        id: tourPopup
+        objectName: "tourPopup"
+        anchors.centerIn: Overlay.overlay
+        width: 360; height: 420; modal: true; focus: true; closePolicy: Popup.CloseOnEscape; padding: 24
+        onOpened: learningService.resetTour()
+        background: Rectangle {
+            radius: 26; border.width: 1; border.color: "#7466C9"
+            gradient: Gradient { GradientStop { position: 0; color: "#2A204D" } GradientStop { position: 1; color: "#11172F" } }
+        }
+        contentItem: ColumnLayout {
+            spacing: 14
+            RowLayout { Layout.fillWidth: true
+                Text { text: "GUIDED JUDGE TOUR"; color: "#B8AFFF"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.3 }
+                Item { Layout.fillWidth: true }
+                Text { text: learningService.tourProgressText; color: "#AFC1DD"; font.pixelSize: 11 }
+            }
+            Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 8; radius: 4; color: "#2B3150"
+                Rectangle { width: parent.width * (learningService.tourStep + 1) / learningService.tourCount; height: parent.height; radius: 4; color: "#8175FF" }
+            }
+            Rectangle {
+                Layout.fillWidth: true; Layout.fillHeight: true; radius: 18; color: "#171E38"; border.color: "#464D73"
+                Column { anchors.fill: parent; anchors.margins: 20; spacing: 14
+                    Text { width: parent.width; text: learningService.tourTitle; color: "white"; font.pixelSize: 23; font.bold: true; wrapMode: Text.WordWrap }
+                    Text { width: parent.width; text: learningService.tourBody; color: "#CAD6EC"; font.pixelSize: 13; lineHeight: 1.22; wrapMode: Text.WordWrap }
+                }
+            }
+            RowLayout { Layout.fillWidth: true; spacing: 8
+                Button { Layout.preferredWidth: 82; Layout.preferredHeight: 42; text: "Back"; enabled: learningService.tourStep > 0; onClicked: learningService.previousTour() }
+                Button {
+                    Layout.fillWidth: true; Layout.preferredHeight: 42
+                    text: learningService.tourStep === learningService.tourCount - 1 ? "Finish Tour" : "Next  →"
+                    onClicked: learningService.tourStep === learningService.tourCount - 1 ? tourPopup.close() : learningService.nextTour()
+                }
+            }
+        }
+    }
+
+    Popup {
+        id: demoResetPopup
+        objectName: "demoResetPopup"
+        anchors.centerIn: Overlay.overlay
+        width: 350; height: 300; modal: true; focus: true; closePolicy: Popup.CloseOnEscape; padding: 24
+        background: Rectangle { radius: 26; color: "#261A24"; border.width: 1; border.color: "#B45C72" }
+        contentItem: ColumnLayout {
+            spacing: 13
+            Text { Layout.fillWidth: true; text: "RESET DEMO DATA?"; color: "#FF9DB4"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.4; horizontalAlignment: Text.AlignHCenter }
+            Text { Layout.fillWidth: true; text: "This clears lesson progress, saved lessons, notes, review status, XP, and streaks."; color: "white"; font.pixelSize: 15; font.bold: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
+            Text { Layout.fillWidth: true; text: "FlashTile creates a timestamped backup first, so the current demo can be recovered."; color: "#B7C7E1"; font.pixelSize: 12; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
+            Item { Layout.fillHeight: true }
+            RowLayout { Layout.fillWidth: true; spacing: 8
+                Button { Layout.fillWidth: true; Layout.preferredHeight: 42; text: "Cancel"; onClicked: demoResetPopup.close() }
+                Button { Layout.fillWidth: true; Layout.preferredHeight: 42; text: "Reset Demo"; onClicked: { learningService.resetDemoData(); flowStep = 0; selectedAnswer = -1; demoResetPopup.close(); progressPopup.close() } }
+            }
+        }
+    }
+
+    Popup {
         id: resetPopup
         anchors.centerIn: Overlay.overlay
         width: 330
@@ -1886,6 +2152,21 @@ ApplicationWindow {
     Shortcut {
         sequence: "Ctrl+T"
         onActivated: teamBoardPopup.open()
+    }
+
+    Shortcut {
+        sequence: "Ctrl+F"
+        onActivated: searchPopup.open()
+    }
+
+    Shortcut {
+        sequence: "Ctrl+P"
+        onActivated: progressPopup.open()
+    }
+
+    Shortcut {
+        sequence: "F1"
+        onActivated: tourPopup.open()
     }
 
     Connections {

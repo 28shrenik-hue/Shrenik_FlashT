@@ -34,6 +34,11 @@ def main() -> int:
             "discoveryPopup",
             "notesPopup",
             "takeawaysPopup",
+            "progressPopup",
+            "achievementsPopup",
+            "searchPopup",
+            "tourPopup",
+            "demoResetPopup",
         ),
     )
     args = parser.parse_args()

@@ -176,6 +176,8 @@ def test_daily_discovery_is_complete_and_can_advance(
     }
     assert service.dailyDiscoveryBody
     assert service.dailyDiscoveryContext
+    assert service.dailyDiscoverySource
+    assert service.dailyDiscoverySourceUrl.startswith("https://")
 
     service.nextDiscovery()
     assert service.dailyDiscoveryTitle != first_title
@@ -194,3 +196,58 @@ def test_team_board_demo_exposes_complete_sample_metrics(
     assert len(service.teamMemberItems) == 6
     assert any("Patel, Shrenik (You)" in member for member in service.teamMemberItems)
     assert all(len(member.split("|")) == 4 for member in service.teamMemberItems)
+    assert service.teamChallenge == "Complete 35 lessons together"
+    assert service.teamChallengeReward
+
+
+def test_search_opens_matching_lesson(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    assert service.searchResultCount == 15
+
+    service.searchLessons("zero trust")
+    assert service.searchResultCount == 1
+    assert "Cybersecurity & Digital Trust|Zero Trust Foundations" in service.searchLessonItems
+    service.openSearchResult(0)
+    assert service.topic == "Cybersecurity & Digital Trust"
+    assert service.title == "Zero Trust Foundations"
+
+
+def test_progress_badges_and_tour(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    assert service.progressCompleted == 0
+    assert service.unlockedBadgeCount == 0
+    assert len(service.badgeItems) == 6
+    assert len(service.progressTopicItems) == 3
+
+    service.checkAnswer(1)
+    service.completeLesson()
+    assert service.progressCompleted == 1
+    assert service.progressPercent == 7
+    assert service.unlockedBadgeCount == 1
+
+    assert service.tourProgressText == "1 of 7"
+    first = service.tourTitle
+    service.nextTour()
+    assert service.tourTitle != first
+    service.previousTour()
+    assert service.tourTitle == first
+
+
+def test_demo_reset_preserves_motion_preference_and_creates_backup(
+    tmp_path: Path, monkeypatch
+) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.setReducedMotion(True)
+    service.toggleBookmark()
+    service.saveLessonNote("Demo note")
+    service.checkAnswer(1)
+    service.completeLesson()
+
+    backup = Path(service.resetDemoData())
+    assert backup.exists()
+    assert service.xp == 0
+    assert service.progressCompleted == 0
+    assert service.bookmarkCount == 0
+    assert service.noteCount == 0
+    assert service.reducedMotion
+    assert service.topic == "AWS & Cloud"

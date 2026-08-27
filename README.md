@@ -15,6 +15,11 @@ expand into a conventional full-screen application.
 - Four guided learning-goal paths that sequence relevant curated lessons locally
 - Date-rotating Daily Discovery cards for general knowledge, history, and major milestones
 - Judge-ready Team Board capability demo with sample progress and contributor data
+- Weekly team challenge with a shared target and team-badge reward
+- Personal Progress with topic completion, mastery, due reviews, and six achievement badges
+- Search across all fifteen lesson titles, topics, and descriptions
+- Seven-step guided judge tour and safely backed-up Demo Reset
+- Visible authoritative source links on every Daily Discovery card
 - Continuous curated lessons with no daily stopping point
 - Structured Core Concept → Practical Scenario → Go Deeper → Knowledge Check → Completion lessons
 - XP and streak persistence in a local Excel workbook
@@ -69,7 +74,7 @@ scripts\build_windows.bat
 The no-Python-required package is created at:
 
 ```text
-release\FlashTile-v1.0.0-rc13.3-win64.zip
+release\FlashTile-v1.0.0-rc14-win64.zip
 ```
 
 The same build can run from the **Windows release package** GitHub Actions

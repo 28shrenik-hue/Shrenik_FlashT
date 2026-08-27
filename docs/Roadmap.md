@@ -8,7 +8,7 @@
 4. Reliable completion, XP, streak, and Excel persistence.
 5. Cross-platform launcher validation.
 
-### Completed in RC13
+### Completed through RC14
 
 1. Expanded the curated content library from nine to fifteen lessons.
 2. Added a safe, fully local learning-goal selector with four curated paths.
@@ -16,12 +16,15 @@
 4. Added reduced-motion support and keyboard shortcuts for core tools.
 5. Added an offline, date-rotating Daily Discovery surface with named footer controls.
 6. Added a clearly labeled Team Board capability demo without exposing private learning data.
+7. Added personal progress, achievement badges, lesson search, and a guided judge tour.
+8. Added safe Demo Reset with a timestamped workbook backup.
+9. Added official source links to every Daily Discovery card and a weekly team challenge.
 
 ### Remaining v1.0 release work
 
 1. Complete user acceptance testing of every control on macOS and Windows.
 2. Verify keyboard focus order and screen-reader announcements with real assistive technology.
-3. Build and verify the RC13 distributable Windows package on a Windows runner.
+3. Build and verify the RC14 distributable Windows package on a Windows runner.
 4. Promote the approved candidate to v1.0 and finalize release notes.
 
 Dashboard, journey, leaderboard, manager, social, and AI-coach concepts remain

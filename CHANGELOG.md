@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.0-rc14 — Capability Showcase
+
+- Added Personal Progress with overall and per-topic completion, mastery, due-review, XP, and streak metrics.
+- Added six milestone-based achievement badges.
+- Added a searchable index across all fifteen lessons.
+- Added a seven-step guided judge tour with an F1 shortcut.
+- Added a confirmed Demo Reset that creates a timestamped workbook backup before clearing local learning data.
+- Added a weekly Team Board challenge and shared badge reward.
+- Added visible authoritative source labels and links to all twelve Daily Discovery cards.
+- Preserved the approved five-button footer and fixed 430 × 730 tile.
+- Expanded automated regression coverage to 25 tests.
+
 ## 1.0.0-rc13.3 — Judge Demo Roster
 
 - Replaced placeholder contributors with the six project-team names supplied for the judge demo.

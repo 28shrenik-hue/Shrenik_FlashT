@@ -35,6 +35,13 @@ Windows, then verify:
 - The header Team Board control opens a complete six-member capability demo.
 - Team Board is clearly labeled Demo Mode and contains no notes, answers, or confidence data.
 - Weekly XP, streak, lesson goal, progress bar, and all six contributors fit without clipping.
+- The Team Board shows the weekly challenge and team-badge reward.
+- Clicking XP opens Personal Progress with accurate overall and per-topic metrics.
+- Achievement Badges displays six badges and unlocks First Step after one completion.
+- Lesson Search finds lessons by title, topic, or description and opens the result.
+- The `?` control starts a complete seven-step guided judge tour.
+- Every Daily Discovery card displays a named source link.
+- Demo Reset requires confirmation, creates a timestamped backup, and clears demo activity.
 
 ## Persistence and recovery
 
@@ -49,7 +56,7 @@ Windows, then verify:
 - No text or controls are clipped at any learning stage.
 - The experience remains usable with the trackpad and keyboard.
 - Reduced motion disables swivel, card transitions, pulses, and breathing-circle scaling.
-- `Ctrl+G`, `Ctrl+B`, and `Ctrl+N` open goals, bookmarks, and notes.
+- `Ctrl+G`, `Ctrl+B`, `Ctrl+N`, `Ctrl+D`, `Ctrl+T`, `Ctrl+F`, and `Ctrl+P` open their matching tools; `F1` opens the judge tour.
 
 Record the operating system, display scaling, pass/fail item, and a screenshot or
 log excerpt for every issue.

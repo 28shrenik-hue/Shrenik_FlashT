@@ -73,6 +73,17 @@ class ExcelService:
         if not backup.exists():
             shutil.copy2(self.path, backup)
 
+    def reset_demo_data(self) -> Path:
+        """Back up the current workbook, then restore a clean demo state."""
+        backup_dir = self.path.parent / "backups"
+        backup_dir.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        backup = backup_dir / f"{self.path.stem}-demo-reset-{timestamp}.xlsx"
+        if self.path.exists():
+            shutil.copy2(self.path, backup)
+        self._create()
+        return backup
+
     def _save(self, workbook) -> None:
         self._backup()
         temporary = self.path.with_suffix(".tmp.xlsx")
@@ -349,3 +360,41 @@ class ExcelService:
             elif value < cursor.isoformat():
                 break
         return xp, streak
+
+    def progress_summary(self, total_lessons: int) -> dict[str, object]:
+        workbook = load_workbook(self.path)
+        completed = {
+            (str(row[1]), str(row[2]))
+            for row in workbook["Progress"].iter_rows(min_row=2, values_only=True)
+            if row[1] and row[2] and not str(row[2]).endswith(" • Recall")
+        }
+        completed_topics = {topic for topic, _ in completed}
+        mastered = sum(
+            1
+            for row in workbook["Reviews"].iter_rows(min_row=2, values_only=True)
+            if row[0] and row[1] and int(row[2] or 0) >= 3
+        )
+        note_count = sum(
+            1
+            for row in workbook["Notes"].iter_rows(min_row=2, values_only=True)
+            if row[0] and row[1] and row[2]
+        )
+        bookmark_count = sum(
+            1
+            for row in workbook["Bookmarks"].iter_rows(min_row=2, values_only=True)
+            if row[0] and row[1]
+        )
+        topic_counts: dict[str, int] = {}
+        for topic, _ in completed:
+            topic_counts[topic] = topic_counts.get(topic, 0) + 1
+        completed_count = len(completed)
+        return {
+            "completed": completed_count,
+            "completed_topics": len(completed_topics),
+            "mastered": mastered,
+            "notes": note_count,
+            "bookmarks": bookmark_count,
+            "due_reviews": len(self.due_reviews()),
+            "percent": round(completed_count * 100 / max(1, total_lessons)),
+            "topic_counts": topic_counts,
+        }

@@ -16,6 +16,11 @@
 - [x] Reduced-motion preference and core keyboard shortcuts
 - [x] Date-rotating offline Daily Discovery and named footer hover labels
 - [x] Judge-ready Team Board capability demo with explicit sample-data labeling
+- [x] Personal progress and achievement badges
+- [x] Lesson search and seven-step guided judge tour
+- [x] Safely backed-up Demo Reset
+- [x] Official source links for Daily Discovery
+- [x] Weekly Team Board challenge
 - [ ] User acceptance pass on macOS
 - [ ] User acceptance pass on Windows
 - [ ] Windows artifact built on a Windows runner

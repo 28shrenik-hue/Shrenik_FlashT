@@ -312,72 +312,96 @@ DISCOVERY_ITEMS = (
         "title": "Why the sky looks blue",
         "body": "Air molecules scatter shorter blue wavelengths of sunlight more strongly than longer red wavelengths, so blue light reaches our eyes from across the sky.",
         "context": "At sunrise and sunset, sunlight travels through more atmosphere, leaving more reds and oranges in the direct light.",
+        "source": "NASA Space Place",
+        "source_url": "https://spaceplace.nasa.gov/blue-sky/en/",
     },
     {
         "category": "History Spotlight",
         "title": "The Rosetta Stone",
         "body": "The Rosetta Stone carries one decree in three scripts. Comparing them helped scholars decipher Egyptian hieroglyphs in the nineteenth century.",
         "context": "The breakthrough shows how a shared message can unlock an unfamiliar writing system.",
+        "source": "The British Museum",
+        "source_url": "https://www.britishmuseum.org/blog/everything-you-ever-wanted-know-about-rosetta-stone",
     },
     {
         "category": "Important Milestone",
         "title": "Smallpox eradication",
         "body": "In 1980, the World Health Assembly declared smallpox eradicated after a coordinated global vaccination and surveillance campaign.",
         "context": "It remains the only human infectious disease eradicated worldwide.",
+        "source": "World Health Organization",
+        "source_url": "https://www.who.int/emergencies/situations/smallpox",
     },
     {
         "category": "General Knowledge",
         "title": "A day is not exactly 24 hours",
         "body": "Earth completes one rotation relative to distant stars in about 23 hours and 56 minutes. Our 24-hour solar day also accounts for Earth moving around the Sun.",
         "context": "That four-minute difference is why stars rise slightly earlier each night.",
+        "source": "NASA Earth Science",
+        "source_url": "https://science.nasa.gov/earth/facts/",
     },
     {
         "category": "History Spotlight",
         "title": "The printing press",
         "body": "Movable-type printing existed earlier in Asia. In fifteenth-century Europe, Gutenberg's press helped make books faster and less expensive to reproduce at scale.",
         "context": "Cheaper copying accelerated the spread of literacy, scientific ideas, and public debate.",
+        "source": "Library of Congress",
+        "source_url": "https://www.loc.gov/item/03008887/",
     },
     {
         "category": "Important Milestone",
         "title": "The Universal Declaration of Human Rights",
         "body": "The United Nations General Assembly adopted the Universal Declaration of Human Rights in 1948 as a common standard of rights and freedoms.",
         "context": "Its thirty articles influenced constitutions, treaties, and human-rights law around the world.",
+        "source": "United Nations",
+        "source_url": "https://www.un.org/en/about-us/universal-declaration-of-human-rights/",
     },
     {
         "category": "General Knowledge",
         "title": "Why ice floats",
         "body": "Water expands as it freezes into an open crystal structure. Solid ice is therefore less dense than liquid water and floats.",
         "context": "Floating ice insulates the water below, helping aquatic ecosystems survive cold seasons.",
+        "source": "U.S. Geological Survey",
+        "source_url": "https://www.usgs.gov/water-science-school/science/water-density",
     },
     {
         "category": "History Spotlight",
         "title": "Apollo 11",
         "body": "Apollo 11 carried Neil Armstrong, Buzz Aldrin, and Michael Collins to the Moon in 1969. Armstrong and Aldrin became the first people to walk there.",
         "context": "The mission depended on years of engineering, testing, navigation, and teamwork across thousands of roles.",
+        "source": "NASA",
+        "source_url": "https://www.nasa.gov/missions/apollo/apollo-11/apollo-11-mission-overview/",
     },
     {
         "category": "Important Milestone",
         "title": "The internet adopts TCP/IP",
         "body": "On January 1, 1983, ARPANET transitioned to the TCP/IP protocol suite, allowing different networks to communicate through a common standard.",
         "context": "That shared protocol foundation became a defining step toward today's internet.",
+        "source": "DARPA",
+        "source_url": "https://www.darpa.mil/news/features/arpanet",
     },
     {
         "category": "General Knowledge",
         "title": "The atmosphere is mostly nitrogen",
         "body": "Dry air near Earth's surface is roughly 78 percent nitrogen and 21 percent oxygen, with argon, carbon dioxide, and other gases making up the rest.",
         "context": "Small concentrations of gases such as carbon dioxide can still have major effects on climate and life.",
+        "source": "NASA Earth Science",
+        "source_url": "https://science.nasa.gov/earth/facts/",
     },
     {
         "category": "History Spotlight",
         "title": "The Magna Carta",
         "body": "King John sealed Magna Carta in 1215 after conflict with English barons. Although many clauses addressed medieval disputes, it became a lasting symbol that rulers are subject to law.",
         "context": "Later generations connected that principle to due process and limits on government power.",
+        "source": "UK Parliament",
+        "source_url": "https://commonslibrary.parliament.uk/magna-carta-does-it-still-matter/",
     },
     {
         "category": "Important Milestone",
         "title": "The first powered flight",
         "body": "In 1903, the Wright brothers completed controlled, sustained flights in a powered aircraft near Kitty Hawk, North Carolina.",
         "context": "Their success combined aerodynamic research, control systems, propulsion, and repeated experimentation.",
+        "source": "U.S. National Park Service",
+        "source_url": "https://www.nps.gov/wrbr/learn/historyculture/thefirstflight.htm",
     },
 )
 
@@ -387,6 +411,8 @@ TEAM_BOARD_DEMO = {
     "weekly_goal": 35,
     "xp": 1850,
     "streak": 6,
+    "challenge": "Complete 35 lessons together",
+    "challenge_reward": "Unlock the Knowledge Crew badge",
     "members": (
         ("Tran, Victoria", "AI / ML", "5 lessons", "340 XP"),
         ("Edupuganti, Kranthima", "AWS & Cloud", "5 lessons", "325 XP"),
@@ -396,6 +422,25 @@ TEAM_BOARD_DEMO = {
         ("Patel, Shrenik (You)", "Balanced Path", "4 lessons", "295 XP"),
     ),
 }
+
+BADGES = (
+    ("✦", "First Step", "Complete your first lesson", "completed", 1),
+    ("↗", "Momentum", "Build a 3-day learning streak", "streak", 3),
+    ("✎", "Knowledge Keeper", "Save 3 quick notes", "notes", 3),
+    ("◆", "Curator", "Save 3 lessons", "bookmarks", 3),
+    ("✓", "Mastery Maker", "Master one lesson", "mastered", 1),
+    ("◎", "Explorer", "Learn across all 3 topics", "completed_topics", 3),
+)
+
+DEMO_TOUR = (
+    ("Welcome to FlashTile", "A focused learning tile that turns short lessons into recall, reflection, and measurable progress."),
+    ("Set a Learning Goal", "Choose a curated path from the first footer button. FlashTile sequences lessons across the skills you want to build."),
+    ("Learn, Apply, Recall", "Each flash moves from a core concept to a practical scenario, deeper context, and a knowledge check."),
+    ("Keep What Matters", "Save lessons and capture quick takeaways. Everything stays in the local workbook on this computer."),
+    ("Reset Your Focus", "The Meditation button provides a guided 60-second breathing break, with reduced-motion support."),
+    ("Discover Something Daily", "Daily Discovery rotates through general knowledge and history, with a visible authoritative source."),
+    ("Show Team Capability", "Team Board demonstrates shared goals and a weekly challenge. Personal Progress shows badges and measurable growth."),
+)
 
 
 class LearningService(QObject):
@@ -425,6 +470,8 @@ class LearningService(QObject):
                 self._lesson_index = goal_index
         self._reduced_motion = self.store.reduced_motion()
         self._discovery_offset = 0
+        self._search_query = ""
+        self._tour_step = 0
         self._resume_topic = self._topic
         self._resume_lesson_index = self._lesson_index
         self._xp, self._streak = self.store.totals()
@@ -484,6 +531,19 @@ class LearningService(QObject):
         self._bookmarked = self.store.is_bookmarked(lesson.topic, lesson.title)
         self._lesson_note = self.store.lesson_note(lesson.topic, lesson.title)
         self._review_state = self.store.review_state(lesson.topic, lesson.title)
+
+    def _progress(self) -> dict[str, object]:
+        return self.store.progress_summary(sum(len(items) for items in LESSONS.values()))
+
+    def _search_results(self) -> list[tuple[str, str]]:
+        query = self._search_query.strip().casefold()
+        results = []
+        for topic, lessons in LESSONS.items():
+            for lesson in lessons:
+                searchable = f"{topic} {lesson.title} {lesson.description}".casefold()
+                if not query or query in searchable:
+                    results.append((topic, lesson.title))
+        return results
 
     @staticmethod
     def _mastery_label(level: int) -> str:
@@ -617,6 +677,14 @@ class LearningService(QObject):
     def dailyDiscoveryContext(self) -> str:
         return self._discovery()["context"]
 
+    @Property(str, notify=changed)
+    def dailyDiscoverySource(self) -> str:
+        return self._discovery()["source"]
+
+    @Property(str, notify=changed)
+    def dailyDiscoverySourceUrl(self) -> str:
+        return self._discovery()["source_url"]
+
     @Property(str, constant=True)
     def teamName(self) -> str:
         return str(TEAM_BOARD_DEMO["name"])
@@ -637,9 +705,83 @@ class LearningService(QObject):
     def teamStreak(self) -> int:
         return int(TEAM_BOARD_DEMO["streak"])
 
+    @Property(str, constant=True)
+    def teamChallenge(self) -> str:
+        return str(TEAM_BOARD_DEMO["challenge"])
+
+    @Property(str, constant=True)
+    def teamChallengeReward(self) -> str:
+        return str(TEAM_BOARD_DEMO["challenge_reward"])
+
     @Property("QStringList", constant=True)
     def teamMemberItems(self) -> list[str]:
         return ["|".join(member) for member in TEAM_BOARD_DEMO["members"]]
+
+    @Property(int, notify=changed)
+    def progressCompleted(self) -> int:
+        return int(self._progress()["completed"])
+
+    @Property(int, constant=True)
+    def progressTotal(self) -> int:
+        return sum(len(items) for items in LESSONS.values())
+
+    @Property(int, notify=changed)
+    def progressPercent(self) -> int:
+        return int(self._progress()["percent"])
+
+    @Property(int, notify=changed)
+    def progressMastered(self) -> int:
+        return int(self._progress()["mastered"])
+
+    @Property(int, notify=changed)
+    def progressDueReviews(self) -> int:
+        return int(self._progress()["due_reviews"])
+
+    @Property("QStringList", notify=changed)
+    def progressTopicItems(self) -> list[str]:
+        counts = self._progress()["topic_counts"]
+        return [f"{topic}|{int(counts.get(topic, 0))}|{len(lessons)}" for topic, lessons in LESSONS.items()]
+
+    @Property("QStringList", notify=changed)
+    def badgeItems(self) -> list[str]:
+        progress = self._progress()
+        values = {**progress, "streak": self._streak}
+        return [
+            f"{icon}|{name}|{description}|{1 if int(values[key]) >= target else 0}"
+            for icon, name, description, key, target in BADGES
+        ]
+
+    @Property(int, notify=changed)
+    def unlockedBadgeCount(self) -> int:
+        return sum(item.endswith("|1") for item in self.badgeItems)
+
+    @Property("QStringList", notify=changed)
+    def searchLessonItems(self) -> list[str]:
+        return [f"{topic}|{title}" for topic, title in self._search_results()]
+
+    @Property(int, notify=changed)
+    def searchResultCount(self) -> int:
+        return len(self._search_results())
+
+    @Property(str, notify=changed)
+    def tourTitle(self) -> str:
+        return DEMO_TOUR[self._tour_step][0]
+
+    @Property(str, notify=changed)
+    def tourBody(self) -> str:
+        return DEMO_TOUR[self._tour_step][1]
+
+    @Property(str, notify=changed)
+    def tourProgressText(self) -> str:
+        return f"{self._tour_step + 1} of {len(DEMO_TOUR)}"
+
+    @Property(int, notify=changed)
+    def tourStep(self) -> int:
+        return self._tour_step
+
+    @Property(int, constant=True)
+    def tourCount(self) -> int:
+        return len(DEMO_TOUR)
 
     @Property(bool, notify=changed)
     def reviewMode(self) -> bool:
@@ -802,6 +944,60 @@ class LearningService(QObject):
     def nextDiscovery(self) -> None:
         self._discovery_offset = (self._discovery_offset + 1) % len(DISCOVERY_ITEMS)
         self.changed.emit()
+
+    @Slot(str)
+    def searchLessons(self, query: str) -> None:
+        self._search_query = query[:80]
+        self.changed.emit()
+
+    @Slot(int)
+    def openSearchResult(self, index: int) -> None:
+        results = self._search_results()
+        if 0 <= index < len(results):
+            topic, title = results[index]
+            self._open_lesson(topic, title, clear_goal=True)
+
+    @Slot()
+    def resetTour(self) -> None:
+        self._tour_step = 0
+        self.changed.emit()
+
+    @Slot()
+    def nextTour(self) -> None:
+        if self._tour_step < len(DEMO_TOUR) - 1:
+            self._tour_step += 1
+            self.changed.emit()
+
+    @Slot()
+    def previousTour(self) -> None:
+        if self._tour_step > 0:
+            self._tour_step -= 1
+            self.changed.emit()
+
+    @Slot(result=str)
+    def resetDemoData(self) -> str:
+        reduced_motion = self._reduced_motion
+        backup = self.store.reset_demo_data()
+        self._topic = "AWS & Cloud"
+        self._lesson_index = 0
+        self._resume_topic = self._topic
+        self._resume_lesson_index = 0
+        self._learning_goal = ""
+        self._goal_position = 0
+        self._discovery_offset = 0
+        self._search_query = ""
+        self._tour_step = 0
+        self._quiz_passed = False
+        self._review_mode = False
+        self._xp = 0
+        self._streak = 0
+        self._reduced_motion = reduced_motion
+        if reduced_motion:
+            self.store.set_reduced_motion(True)
+        self._load_lesson_tools()
+        self.changed.emit()
+        self.celebration.emit("Demo reset complete. Your previous data was backed up.")
+        return str(backup)
 
     @Slot(str)
     def setConfidence(self, confidence: str) -> None:
