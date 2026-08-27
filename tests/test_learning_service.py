@@ -1,0 +1,196 @@
+from datetime import date
+from pathlib import Path
+
+from services import learning_service
+from services.excel_service import ExcelService
+from services.learning_service import LearningService
+
+
+def make_service(tmp_path: Path, monkeypatch) -> LearningService:
+    monkeypatch.setattr(
+        learning_service,
+        "ExcelService",
+        lambda: ExcelService(tmp_path / "FlashTile.xlsx"),
+    )
+    return LearningService()
+
+
+def test_completion_requires_correct_answer(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.completeLesson()
+    assert service.xp == 0
+
+    service.checkAnswer(1)
+    assert service.quizPassed
+    service.completeLesson()
+    assert service.xp == 25
+
+
+def test_topic_change_resets_quiz(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.checkAnswer(1)
+    assert service.quizPassed
+    service.selectTopic("AI / ML")
+    assert not service.quizPassed
+
+
+def test_next_lesson_advances_and_persists(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    first_title = service.title
+    service.nextLesson()
+    assert service.title != first_title
+
+    resumed = make_service(tmp_path, monkeypatch)
+    assert resumed.title == service.title
+
+
+def test_flagship_lessons_have_complete_learning_stages() -> None:
+    assert sum(len(lessons) for lessons in learning_service.LESSONS.values()) == 15
+    for lessons in learning_service.LESSONS.values():
+        for lesson in lessons:
+            assert lesson.description
+            assert lesson.why_it_matters
+            assert lesson.scenario
+            assert lesson.deeper
+            assert lesson.question
+            assert len(lesson.options) == 3
+            assert lesson.recall_scenario
+            assert lesson.recall_question
+            assert len(lesson.recall_options) == 3
+
+
+def test_bookmark_and_note_persist_per_lesson(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    first_title = service.title
+    assert not service.bookmarked
+    assert service.lessonNote == ""
+
+    service.toggleBookmark()
+    service.saveLessonNote("A Region contains isolated Availability Zones.")
+
+    resumed = make_service(tmp_path, monkeypatch)
+    assert resumed.title == first_title
+    assert resumed.bookmarked
+    assert resumed.lessonNote == "A Region contains isolated Availability Zones."
+
+    resumed.nextLesson()
+    assert resumed.title != first_title
+    assert not resumed.bookmarked
+    assert resumed.lessonNote == ""
+
+
+def test_confidence_schedules_review(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.checkAnswer(1)
+    service.completeLesson()
+    service.setConfidence("got_it")
+
+    assert service.masteryLabel == "Practicing"
+    assert "Next review:" in service.nextReviewText
+
+
+def test_due_review_uses_alternate_recall_and_updates_mastery(
+    tmp_path: Path, monkeypatch
+) -> None:
+    store = ExcelService(tmp_path / "FlashTile.xlsx")
+    lesson = learning_service.LESSONS["AWS & Cloud"][0]
+    store._save_review_state(
+        lesson.topic,
+        lesson.title,
+        1,
+        date.today().isoformat(),
+        1,
+        "need_practice",
+        "lesson_complete",
+    )
+
+    service = make_service(tmp_path, monkeypatch)
+    assert service.reviewMode
+    assert service.scenario == lesson.recall_scenario
+    assert service.question == lesson.recall_question
+
+    service.checkAnswer(lesson.recall_answer)
+    assert service.quizPassed
+    assert service.completeLesson()
+    assert service.xp == 10
+    assert service.masteryLabel == "Practicing"
+
+
+def test_learning_goal_sequences_curated_lessons(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.selectLearningGoal("Balanced digital foundations")
+
+    assert service.goalActive
+    assert service.learningGoal == "Balanced digital foundations"
+    assert service.title == "AWS Global Infrastructure"
+    assert service.goalProgressText == "Flash 1 of 6"
+
+    service.nextLesson()
+    assert service.topic == "AI / ML"
+    assert service.title == "How Models Learn"
+    assert service.goalProgressText == "Flash 2 of 6"
+
+    resumed = make_service(tmp_path, monkeypatch)
+    assert resumed.learningGoal == service.learningGoal
+    assert resumed.title == service.title
+
+
+def test_saved_takeaway_browser_opens_and_removes_note(
+    tmp_path: Path, monkeypatch
+) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.saveLessonNote("Remember the failure boundary.")
+    service.nextLesson()
+
+    assert service.noteCount == 1
+    assert "Remember the failure boundary" in service.noteItems[0]
+
+    service.openNote(0)
+    assert service.title == "AWS Global Infrastructure"
+    assert service.lessonNote == "Remember the failure boundary."
+
+    service.removeNote(0)
+    assert service.noteCount == 0
+
+
+def test_reduced_motion_preference_persists(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.setReducedMotion(True)
+    assert service.reducedMotion
+
+    resumed = make_service(tmp_path, monkeypatch)
+    assert resumed.reducedMotion
+
+
+def test_daily_discovery_is_complete_and_can_advance(
+    tmp_path: Path, monkeypatch
+) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    first_title = service.dailyDiscoveryTitle
+
+    assert service.dailyDiscoveryDate
+    assert service.dailyDiscoveryCategory in {
+        "General Knowledge",
+        "History Spotlight",
+        "Important Milestone",
+    }
+    assert service.dailyDiscoveryBody
+    assert service.dailyDiscoveryContext
+
+    service.nextDiscovery()
+    assert service.dailyDiscoveryTitle != first_title
+
+
+def test_team_board_demo_exposes_complete_sample_metrics(
+    tmp_path: Path, monkeypatch
+) -> None:
+    service = make_service(tmp_path, monkeypatch)
+
+    assert service.teamName == "Cloud Pioneers"
+    assert service.teamWeeklyCompleted == 26
+    assert service.teamWeeklyGoal == 35
+    assert service.teamXp == 1850
+    assert service.teamStreak == 6
+    assert len(service.teamMemberItems) == 6
+    assert any("Patel, Shrenik (You)" in member for member in service.teamMemberItems)
+    assert all(len(member.split("|")) == 4 for member in service.teamMemberItems)

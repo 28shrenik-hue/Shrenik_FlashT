@@ -1,8 +1,32 @@
-# FlashTile
+# FlashTile — Tile-First Learning Engine
 
 **Knowledge that finds you.**
 
-FlashTile is a cross-platform desktop micro-learning companion built with Python, PySide6/QML, and a replaceable Excel persistence layer. The foundation ships with AWS Cloud, Artificial Intelligence, Python, Cybersecurity, and Leadership cards plus XP and streak tracking.
+FlashTile is a small, always-on-top desktop micro-learning tile built with Python,
+PySide6/QML, and a replaceable Excel persistence layer. It intentionally does not
+expand into a conventional full-screen application.
+
+## v1.0 release-candidate experience
+
+- One fixed 430 × 730 floating tile
+- Original 3D liquid-glass FlashTile logo integrated into the compact header
+- Premium glass styling and mouse-position swivel
+- Fifteen curated lessons across AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust
+- Four guided learning-goal paths that sequence relevant curated lessons locally
+- Date-rotating Daily Discovery cards for general knowledge, history, and major milestones
+- Judge-ready Team Board capability demo with sample progress and contributor data
+- Continuous curated lessons with no daily stopping point
+- Structured Core Concept → Practical Scenario → Go Deeper → Knowledge Check → Completion lessons
+- XP and streak persistence in a local Excel workbook
+- Per-lesson bookmarks, 500-character Quick Notes, and a saved-takeaways browser
+- Saved Review list, confidence check, spaced recall scheduling, and concept mastery
+- Optional in-tile 60-second breathing reset with no wellness data collection
+- Persistent reduced-motion mode and keyboard shortcuts for core learning tools
+- Named hover labels for Learning Goals, Saved Lessons, Meditation, Daily Discovery, and Quick Notes
+- Explicit Demo Mode labeling for team features that are not yet connected to shared cloud sync
+- Primary-screen-safe startup positioning on multi-monitor Macs and PCs
+- Restrained perspective slide, depth scale, light sweep, and background parallax between flashes
+- No dashboard, sidebar, social feed, or full-screen navigation
 
 ## Run on macOS
 
@@ -24,10 +48,32 @@ Double-click `scripts\run_windows.bat`. Install Python 3.12 first and select **A
 ## Test
 
 ```bash
-python -m pytest
+python self_check.py
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
 ```
 
-Progress is stored locally at `~/.flashtile/FlashTile.xlsx`; it is never committed. No confidential or customer data should be entered into the app.
+Progress is stored locally at `~/.flashtile/FlashTile.xlsx`; it is never committed.
+Daily workbook backups are stored in `~/.flashtile/backups/`, and rotating logs
+are written to `~/.flashtile/logs/FlashTile.log`.
+No confidential or customer data should be entered into the app.
+
+## Build the portable Windows package
+
+On Windows, run:
+
+```text
+scripts\build_windows.bat
+```
+
+The no-Python-required package is created at:
+
+```text
+release\FlashTile-v1.0.0-rc13.3-win64.zip
+```
+
+The same build can run from the **Windows release package** GitHub Actions
+workflow.
 
 ## Repository layout
 
@@ -38,4 +84,5 @@ Progress is stored locally at `~/.flashtile/FlashTile.xlsx`; it is never committ
 - `docs/` capstone vision, proposal, and roadmap
 - `tests/` automated tests
 - `scripts/` macOS and Windows launchers
-
+- `self_check.py` release diagnostics
+- `FlashTile.spec` portable Windows packaging
