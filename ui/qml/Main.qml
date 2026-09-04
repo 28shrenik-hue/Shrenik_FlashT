@@ -30,6 +30,7 @@ ApplicationWindow {
     property string onboardingGoal: learningService.learningGoal !== ""
         ? learningService.learningGoal
         : learningService.defaultLearningGoal
+    property string customGoalStatus: ""
     readonly property int breathPosition: breathElapsed % 12
     readonly property string breathPhase: breathPosition < 4 ? "Inhale" : (breathPosition < 6 ? "Hold" : "Exhale")
     readonly property int breathCount: breathPosition < 4 ? 4 - breathPosition : (breathPosition < 6 ? 6 - breathPosition : 12 - breathPosition)
@@ -73,6 +74,41 @@ ApplicationWindow {
         feedbackText = ""
     }
 
+    function submitCustomGoal(request) {
+        const result = learningService.createCustomLearningPath(request)
+        const separator = result.indexOf("|")
+        const status = separator >= 0 ? result.slice(0, separator) : "ERROR"
+        const message = separator >= 0 ? result.slice(separator + 1) : result
+        customGoalStatus = message
+        if (status === "STARTED") {
+            learningService.completeWelcome()
+            onboardingComplete = true
+            welcomePreview = false
+            welcomeStep = 0
+            flowStep = 0
+            selectedAnswer = -1
+            feedbackText = "Your learning path is ready."
+            feedbackColor = "#68EDC6"
+        }
+        return status
+    }
+
+    function startPreparedTopic(subject) {
+        if (!learningService.openPreparedLearningTopic(subject)) {
+            customGoalStatus = "That prepared topic could not be opened."
+            return false
+        }
+        learningService.completeWelcome()
+        onboardingComplete = true
+        welcomePreview = false
+        welcomeStep = 0
+        flowStep = 0
+        selectedAnswer = -1
+        feedbackText = subject + " is ready."
+        feedbackColor = "#68EDC6"
+        return true
+    }
+
     Rectangle {
         anchors.fill: parent
         radius: 30
@@ -114,9 +150,24 @@ ApplicationWindow {
                 Layout.preferredHeight: 46
 
                 MouseArea {
+                    id: mainHeaderDrag
+                    objectName: "mainHeaderDrag"
                     anchors.fill: parent
                     acceptedButtons: Qt.LeftButton
-                    onPressed: window.startSystemMove()
+                    cursorShape: Qt.SizeAllCursor
+                    property real pressX: 0
+                    property real pressY: 0
+                    onPressed: function(mouse) {
+                        pressX = mouse.x
+                        pressY = mouse.y
+                    }
+                    onPositionChanged: function(mouse) {
+                        if (pressed) {
+                            window.x += mouse.x - pressX
+                            window.y += mouse.y - pressY
+                        }
+                    }
+                    onReleased: learningService.saveWindowPosition(Math.round(window.x), Math.round(window.y))
                 }
 
                 RowLayout {
@@ -151,10 +202,35 @@ ApplicationWindow {
                         ToolTip.delay: 450
                         HoverHandler { id: brandLogoHover }
                     }
-                    Column {
-                        spacing: 1
-                        Text { text: "FLASHTILE"; color: "#EFF7FF"; font.pixelSize: 19; font.bold: true; font.letterSpacing: 2 }
-                        Text { text: "Knowledge that finds you."; color: "#7F96B8"; font.pixelSize: 11 }
+                    Item {
+                        Layout.preferredWidth: 164
+                        Layout.fillHeight: true
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 1
+                            Text { text: "FLASHTILE"; color: "#EFF7FF"; font.pixelSize: 19; font.bold: true; font.letterSpacing: 2 }
+                            Text { text: "Knowledge that finds you."; color: "#7F96B8"; font.pixelSize: 11 }
+                        }
+                        MouseArea {
+                            id: titleHeaderDrag
+                            objectName: "titleHeaderDrag"
+                            anchors.fill: parent
+                            acceptedButtons: Qt.LeftButton
+                            cursorShape: Qt.SizeAllCursor
+                            property real pressX: 0
+                            property real pressY: 0
+                            onPressed: function(mouse) {
+                                pressX = mouse.x
+                                pressY = mouse.y
+                            }
+                            onPositionChanged: function(mouse) {
+                                if (pressed) {
+                                    window.x += mouse.x - pressX
+                                    window.y += mouse.y - pressY
+                                }
+                            }
+                            onReleased: learningService.saveWindowPosition(Math.round(window.x), Math.round(window.y))
+                        }
                     }
                     Item { Layout.fillWidth: true }
                     Button {
@@ -226,14 +302,14 @@ ApplicationWindow {
                 spacing: 8
                 ComboBox {
                     Layout.fillWidth: true
-                    model: learningService.topics
-                    currentIndex: model.indexOf(learningService.topic)
+                    model: learningService.topLearningItems
+                    currentIndex: model.indexOf(learningService.currentTopLearningItem)
                     Accessible.name: "Learning topic"
                     onActivated: {
                         selectedAnswer = -1
                         flowStep = 0
                         feedbackText = ""
-                        learningService.selectTopic(currentText)
+                        learningService.selectTopLearningItem(currentText)
                     }
                 }
                 Button {
@@ -1033,12 +1109,27 @@ ApplicationWindow {
         }
 
         MouseArea {
+            id: welcomeHeaderDrag
+            objectName: "welcomeHeaderDrag"
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
             height: 58
             acceptedButtons: Qt.LeftButton
-            onPressed: window.startSystemMove()
+            cursorShape: Qt.SizeAllCursor
+            property real pressX: 0
+            property real pressY: 0
+            onPressed: function(mouse) {
+                pressX = mouse.x
+                pressY = mouse.y
+            }
+            onPositionChanged: function(mouse) {
+                if (pressed) {
+                    window.x += mouse.x - pressX
+                    window.y += mouse.y - pressY
+                }
+            }
+            onReleased: learningService.saveWindowPosition(Math.round(window.x), Math.round(window.y))
         }
 
         Button {
@@ -1324,22 +1415,113 @@ ApplicationWindow {
                         }
                     }
 
+                    Text {
+                        Layout.fillWidth: true
+                        text: "PICK A PREPARED TOPIC OR TYPE YOUR OWN"
+                        color: "#8FA6C8"
+                        font.pixelSize: 9
+                        font.bold: true
+                        font.letterSpacing: 1.0
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 7
+                        TextField {
+                            id: customGoalInput
+                            objectName: "customGoalInput"
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 38
+                            placeholderText: "Describe what you want to learn"
+                            maximumLength: 240
+                            color: "#E8F1FF"
+                            placeholderTextColor: "#7185A6"
+                            font.pixelSize: 10
+                            Accessible.name: "Describe what you want to learn"
+                            background: Rectangle {
+                                radius: 11
+                                color: "#0D1930"
+                                border.width: 1
+                                border.color: parent.activeFocus ? "#5CE1FF" : "#3A5274"
+                            }
+                            onAccepted: customGoalButton.clicked()
+                        }
+                        Button {
+                            id: browsePreparedButton
+                            objectName: "browsePreparedButton"
+                            Layout.preferredWidth: 38
+                            Layout.preferredHeight: 38
+                            text: "▾"
+                            Accessible.name: "Browse six prepared learning topics"
+                            onClicked: preparedTopicsPopup.open()
+                            background: Rectangle {
+                                radius: 11
+                                color: parent.hovered ? "#203A5D" : "#152746"
+                                border.width: 1
+                                border.color: "#3A5274"
+                            }
+                            contentItem: Text {
+                                text: parent.text
+                                color: "#68EDC6"
+                                font.pixelSize: 15
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+                        Button {
+                            id: customGoalButton
+                            objectName: "customGoalButton"
+                            Layout.preferredWidth: 70
+                            Layout.preferredHeight: 38
+                            text: "Create →"
+                            enabled: customGoalInput.text.trim().length >= 5
+                            Accessible.name: "Create a learning path from this goal"
+                            onClicked: window.submitCustomGoal(customGoalInput.text.trim())
+                            background: Rectangle {
+                                radius: 11
+                                color: parent.enabled ? (parent.hovered ? "#315D89" : "#234B70") : "#17243A"
+                                border.width: 1
+                                border.color: parent.enabled ? "#5CE1FF" : "#34445F"
+                            }
+                            contentItem: Text {
+                                text: parent.text
+                                color: parent.enabled ? "white" : "#66758D"
+                                font.pixelSize: 10
+                                font.bold: true
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+                    }
+
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 62
+                        Layout.preferredHeight: 48
                         radius: 12
                         color: "#10243A"
                         border.color: "#345B67"
                         Text {
                             anchors.centerIn: parent
                             width: parent.width - 20
-                            text: learningService.describeLearningGoal(window.onboardingGoal)
+                            text: window.customGoalStatus !== ""
+                                ? window.customGoalStatus
+                                : learningService.describeLearningGoal(window.onboardingGoal)
                             color: "#A8E5DA"
-                            font.pixelSize: 10
+                            font.pixelSize: 9
                             lineHeight: 1.12
                             wrapMode: Text.WordWrap
                             horizontalAlignment: Text.AlignHCenter
                         }
+                    }
+
+                    Text {
+                        Layout.fillWidth: true
+                        text: "Educational content only. Do not enter confidential or personal data. Verify firm policy and seek qualified advice for legal or investment decisions."
+                        color: "#7185A6"
+                        font.pixelSize: 8
+                        wrapMode: Text.WordWrap
+                        horizontalAlignment: Text.AlignHCenter
                     }
 
                     Item { Layout.fillHeight: true }
@@ -1647,6 +1829,100 @@ ApplicationWindow {
     }
 
     Popup {
+        id: preparedTopicsPopup
+        objectName: "preparedTopicsPopup"
+        anchors.centerIn: Overlay.overlay
+        width: 360
+        height: 458
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape
+        padding: 22
+
+        background: Rectangle {
+            radius: 26
+            border.width: 1
+            border.color: "#3B8D86"
+            gradient: Gradient {
+                GradientStop { position: 0; color: "#17343F" }
+                GradientStop { position: 1; color: "#11172F" }
+            }
+        }
+
+        contentItem: ColumnLayout {
+            spacing: 9
+            Text {
+                Layout.fillWidth: true
+                text: "PREPARED LEARNING TOPICS"
+                color: "#68EDC6"
+                font.pixelSize: 12
+                font.bold: true
+                font.letterSpacing: 1.3
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Text {
+                Layout.fillWidth: true
+                text: "Choose a reviewed example and open its exact lesson."
+                color: "#B7C7E1"
+                font.pixelSize: 11
+                wrapMode: Text.WordWrap
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Repeater {
+                model: learningService.preparedLearningTopics
+                Button {
+                    required property string modelData
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 46
+                    text: modelData
+                    activeFocusOnTab: true
+                    Accessible.name: "Open prepared lesson: " + modelData
+                    onClicked: {
+                        preparedTopicsPopup.close()
+                        window.startPreparedTopic(modelData)
+                    }
+                    background: Rectangle {
+                        radius: 12
+                        color: parent.hovered ? "#234B70" : "#152746"
+                        border.width: 1
+                        border.color: parent.hovered ? "#68EDC6" : "#3A5274"
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "#E8F1FF"
+                        font.pixelSize: 10
+                        font.bold: true
+                        wrapMode: Text.WordWrap
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+            }
+            Item { Layout.fillHeight: true }
+            Button {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 38
+                text: "Back"
+                onClicked: preparedTopicsPopup.close()
+                background: Rectangle {
+                    radius: 12
+                    color: parent.hovered ? "#203454" : "#152746"
+                    border.width: 1
+                    border.color: "#456087"
+                }
+                contentItem: Text {
+                    text: parent.text
+                    color: "#D1DDF0"
+                    font.pixelSize: 11
+                    font.bold: true
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                }
+            }
+        }
+    }
+
+    Popup {
         id: goalPopup
         objectName: "goalPopup"
         anchors.centerIn: Overlay.overlay
@@ -1697,6 +1973,16 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 model: learningService.learningGoals
                 Accessible.name: "Guided learning path"
+            }
+            Button {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 36
+                text: "Browse 6 prepared topics  →"
+                Accessible.name: "Browse six prepared learning topics"
+                onClicked: {
+                    goalPopup.close()
+                    preparedTopicsPopup.open()
+                }
             }
             Rectangle {
                 Layout.fillWidth: true

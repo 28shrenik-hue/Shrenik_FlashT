@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.0-rc16 — Custom Learning Requests
+
+- Added a compact, editable Prepared Learning Topics selector without changing the approved 410 × 690 tile.
+- Made all six team-requested subjects visible and directly selectable from the Learning Goal screen.
+- Made each prepared subject open its exact starting lesson rather than a generic category landing point.
+- Separated free typing from prepared-topic browsing so the app never predicts or auto-completes what a user is entering.
+- Added all six exact prepared subjects to the main lesson dropdown alongside the three flagship areas.
+- Added a six-topic browser to both onboarding and the persistent Learning Goals control.
+- Replaced inconsistent native frameless-window movement with reliable direct header dragging on macOS and Windows.
+- Saved the last valid tile position so FlashTile can reopen on the side selected by the user.
+- Added prepared demo paths for Risk & Governance and Alternative Investments based on team feedback.
+- Added local matching for BCBS 239, data governance, human-in-the-loop AI controls, issues and errors management, legal-obligation impact assessment, portfolio diversification, liquidity, valuation, and due diligence.
+- Added a safe Topic Requests queue for goals that are not yet available, including duplicate prevention and a notification-ready status.
+- Kept the three flagship goal buttons and categories unchanged.
+- Added an educational-use, confidential-data, legal, and investment notice at the point of entry.
+- Added regression coverage for custom path matching and unavailable-topic requests.
+
 ## 1.0.0-rc15 — Guided Welcome
 
 - Added an in-tile welcome experience using the existing 3D FlashTile logo.

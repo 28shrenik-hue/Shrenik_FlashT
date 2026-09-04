@@ -62,7 +62,14 @@ def check_data_and_learning() -> None:
         store.set_reduced_motion(True)
 
         workbook = load_workbook(workbook_path)
-        expected = {"Progress", "Settings", "Bookmarks", "Notes", "Reviews"}
+        expected = {
+            "Progress",
+            "Settings",
+            "Bookmarks",
+            "Notes",
+            "Reviews",
+            "Topic Requests",
+        }
         if not expected.issubset(workbook.sheetnames):
             raise RuntimeError("Workbook schema is incomplete")
         if not (Path(folder) / "backups").exists():
@@ -72,12 +79,14 @@ def check_data_and_learning() -> None:
         learning_service.ExcelService = lambda: ExcelService(workbook_path)
         try:
             learning = learning_service.LearningService()
-            if len(learning.topics) != 3:
-                raise RuntimeError("Expected three flagship learning topics")
-            if sum(len(lessons) for lessons in learning_service.LESSONS.values()) != 15:
-                raise RuntimeError("Expected fifteen curated lessons")
+            if len(learning.topics) != 5:
+                raise RuntimeError("Expected three flagship and two prepared learning areas")
+            if sum(len(lessons) for lessons in learning_service.LESSONS.values()) != 25:
+                raise RuntimeError("Expected twenty-five curated and prepared lessons")
             if len(learning.learningGoals) != 3:
                 raise RuntimeError("Expected three category-aligned learning paths")
+            if len(learning.topLearningItems) != 9:
+                raise RuntimeError("Expected three flagship areas and six prepared subjects")
             if learning.learningGoal != "Build resilient cloud skills":
                 raise RuntimeError("Legacy mixed-topic goal was not migrated safely")
             if not learning.reducedMotion:
@@ -165,7 +174,26 @@ def check_qml() -> None:
             welcome = window.findChild(QObject, "welcomeLayer")
             continue_button = window.findChild(QObject, "welcomeContinueButton")
             start_button = window.findChild(QObject, "startLearningButton")
-            if welcome is None or continue_button is None or start_button is None:
+            custom_input = window.findChild(QObject, "customGoalInput")
+            browse_button = window.findChild(QObject, "browsePreparedButton")
+            prepared_popup = window.findChild(QObject, "preparedTopicsPopup")
+            main_drag = window.findChild(QObject, "mainHeaderDrag")
+            title_drag = window.findChild(QObject, "titleHeaderDrag")
+            welcome_drag = window.findChild(QObject, "welcomeHeaderDrag")
+            if any(
+                item is None
+                for item in (
+                    welcome,
+                    continue_button,
+                    start_button,
+                    custom_input,
+                    browse_button,
+                    prepared_popup,
+                    main_drag,
+                    title_drag,
+                    welcome_drag,
+                )
+            ):
                 raise RuntimeError("Welcome Tile controls were not created")
             if not bool(welcome.property("visible")):
                 raise RuntimeError("Welcome Tile was not shown on application launch")

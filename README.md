@@ -9,12 +9,18 @@ expand into a conventional full-screen application.
 ## v1.0 release-candidate experience
 
 - One compact fixed 410 × 690 floating tile
+- Draggable from the FlashTile title/header, with the last valid screen position remembered
 - Every-launch Welcome Tile with product context, Learning Goal selection, and a direct Begin Learning action
 - Welcome → Learning Goal → Learning sequence on every fresh application launch
 - Original 3D liquid-glass FlashTile logo integrated into the compact header
 - Premium glass styling and mouse-position swivel
-- Fifteen curated lessons across AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust
+- Fifteen flagship lessons across AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust
 - Three category-aligned learning-goal paths that sequence relevant curated lessons locally
+- An editable Prepared Learning Topics selector with six visible team-requested subjects
+- Exact lesson routing for Risk & Decision Making, BCBS 239 & Data Governance, human-in-the-loop AI controls, Issues & Errors Management, legal-obligation impact assessments, and alternative investments
+- Prediction-free custom-goal typing plus a separate browser for the six prepared examples
+- Nine choices in the in-learning dropdown: the three flagship areas plus all six exact prepared subjects
+- A local request queue when a described topic is not yet available
 - Date-rotating Daily Discovery cards for general knowledge, history, and major milestones
 - Team Board capability preview with local illustrative progress and contributor data
 - Weekly team challenge with a shared target and team-badge reward
@@ -34,6 +40,10 @@ expand into a conventional full-screen application.
 - Primary-screen-safe startup positioning on multi-monitor Macs and PCs
 - Restrained perspective slide, depth scale, light sweep, and background parallax between flashes
 - No dashboard, sidebar, social feed, or full-screen navigation
+
+## Responsible-use notice
+
+FlashTile provides educational content and is not legal, investment, compliance, or other professional advice. Users should not enter confidential, customer, personal, or restricted information. AI-assisted or prepared learning content must be reviewed against applicable firm policy and qualified guidance before it is used for consequential decisions. A disclaimer supports transparency; it does not replace governance, access controls, content review, or legal approval for production use.
 
 ## Run on macOS
 
@@ -76,7 +86,7 @@ scripts\build_windows.bat
 The no-Python-required package is created at:
 
 ```text
-release\FlashTile-v1.0.0-rc15-win64.zip
+release\FlashTile-v1.0.0-rc16-win64.zip
 ```
 
 The same build can run from the **Windows release package** GitHub Actions

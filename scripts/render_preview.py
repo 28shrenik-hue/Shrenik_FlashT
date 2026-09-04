@@ -29,6 +29,7 @@ def main() -> int:
         "--popup",
         choices=(
             "goalPopup",
+            "preparedTopicsPopup",
             "bookmarksPopup",
             "teamBoardPopup",
             "discoveryPopup",

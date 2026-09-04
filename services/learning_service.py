@@ -272,6 +272,189 @@ LESSONS = {
     ),
 }
 
+# Prepared demo paths for the free-form learning-goal experience. These remain
+# local and deterministic until an approved AI content service is connected.
+LESSONS.update(
+    {
+        "Risk & Governance": (
+            Lesson(
+                "Risk & Governance",
+                "Risk-Informed Decision Making",
+                "Risk-informed decisions compare likely outcomes, impact, uncertainty, and trade-offs before choosing a course of action.",
+                why_it_matters="A structured view of risk improves judgment without pretending uncertainty can be eliminated.",
+                scenario="A team can ship a reporting change quickly with limited testing or delay it for stronger validation. How should the decision be framed?",
+                deeper="• Identify affected stakeholders and obligations.\n• Compare likelihood, impact, and reversibility.\n• Record the decision, owner, and monitoring plan.",
+                question="What is the best basis for a risk-informed decision?",
+                options=("Evidence, impact, and trade-offs", "Speed alone", "The loudest opinion"),
+                answer=0,
+                explanation="Good decisions make evidence, uncertainty, impact, and trade-offs visible.",
+                recall_scenario="Two options offer similar value, but one creates a difficult-to-reverse control gap.",
+                recall_question="What deserves special weight?",
+                recall_options=("Reversibility and control impact", "Logo color", "Meeting length"),
+                recall_answer=0,
+                recall_explanation="Hard-to-reverse control impacts deserve explicit consideration.",
+            ),
+            Lesson(
+                "Risk & Governance",
+                "BCBS 239 & Data Governance",
+                "Effective data governance defines ownership, quality, lineage, controls, and accountability so risk information can be trusted.",
+                why_it_matters="Reliable decisions and reporting depend on knowing where critical data came from and whether it is complete and accurate.",
+                scenario="A risk report contains a material number that cannot be traced to its source. What capability is missing?",
+                deeper="• Ownership makes accountability clear.\n• Lineage traces data from source to report.\n• Quality controls test completeness, accuracy, and timeliness.",
+                question="Which capability traces a reported value back to its source?",
+                options=("Data lineage", "Screen sharing", "File naming"),
+                answer=0,
+                explanation="Data lineage documents how data moves and changes from source to use.",
+                recall_scenario="Two teams publish different totals for the same risk measure.",
+                recall_question="What should happen first?",
+                recall_options=("Reconcile definitions, sources, and controls", "Choose the larger total", "Publish both silently"),
+                recall_answer=0,
+                recall_explanation="Shared definitions and traceable sources are necessary to resolve inconsistent reporting.",
+            ),
+            Lesson(
+                "Risk & Governance",
+                "Human-in-the-Loop AI Controls",
+                "Human-in-the-loop control means accountable people define AI boundaries, review consequential outcomes, and can intervene or escalate.",
+                why_it_matters="AI can accelerate work, but it does not transfer accountability away from the organization.",
+                scenario="An AI system proposes a material reporting adjustment. What must happen before the adjustment is accepted?",
+                deeper="• Match oversight to impact and uncertainty.\n• Preserve evidence of inputs, outputs, and approval.\n• Define fallback and escalation paths before use.",
+                question="Who remains accountable for a consequential AI-assisted decision?",
+                options=("The approved human decision owner", "The model", "No one"),
+                answer=0,
+                explanation="The authorized human and organization remain accountable for the decision.",
+                recall_scenario="The model confidence is low and the outcome could affect regulatory reporting.",
+                recall_question="What is the safest next step?",
+                recall_options=("Route to qualified review", "Accept automatically", "Hide the uncertainty"),
+                recall_answer=0,
+                recall_explanation="High-impact uncertainty should trigger qualified human review.",
+            ),
+            Lesson(
+                "Risk & Governance",
+                "Issues & Errors Management",
+                "Issues and errors management identifies problems, contains impact, finds root causes, assigns owners, and verifies sustainable remediation.",
+                why_it_matters="Closing an issue without proving the fix works allows the same failure to return.",
+                scenario="A recurring reporting error is corrected each month but keeps returning. What is missing?",
+                deeper="• Contain immediate impact.\n• Diagnose root cause, not only symptoms.\n• Validate remediation with evidence before closure.",
+                question="When should an issue be considered sustainably closed?",
+                options=("After the fix is validated", "When the ticket is old", "After a verbal promise"),
+                answer=0,
+                explanation="Closure requires evidence that remediation addresses the root cause and operates effectively.",
+                recall_scenario="A control is redesigned after an error, but nobody tests the new process.",
+                recall_question="What remains incomplete?",
+                recall_options=("Remediation validation", "Issue naming", "Calendar scheduling"),
+                recall_answer=0,
+                recall_explanation="The organization needs evidence that the redesigned control works.",
+            ),
+            Lesson(
+                "Risk & Governance",
+                "Legal-Obligation Impact Assessment",
+                "An impact assessment translates a legal or regulatory change into affected processes, data, controls, technology, owners, and deadlines.",
+                why_it_matters="A requirement is not operationalized until its real business and control impacts are understood and owned.",
+                scenario="A new obligation changes data-retention requirements. Which areas should be assessed?",
+                deeper="• Confirm scope and interpretation with qualified experts.\n• Map impacted processes, systems, data, and controls.\n• Assign accountable actions and retain evidence.",
+                question="What is the output of a useful impact assessment?",
+                options=("Owned actions tied to affected areas", "A copied regulation", "An informal chat"),
+                answer=0,
+                explanation="A useful assessment turns the obligation into traceable, owned implementation actions.",
+                recall_scenario="A legal change is documented, but no system or control owner is assigned.",
+                recall_question="What is the main gap?",
+                recall_options=("Accountable implementation ownership", "Font size", "Meeting location"),
+                recall_answer=0,
+                recall_explanation="Without ownership, the required change may not be implemented or evidenced.",
+            ),
+        ),
+        "Investment Fundamentals": (
+            Lesson(
+                "Investment Fundamentals",
+                "Understanding Alternative Investments",
+                "Alternative investments are assets or strategies outside traditional public stocks, bonds, and cash, such as private equity, private credit, real assets, and hedge funds.",
+                why_it_matters="The label covers very different structures, risks, costs, and liquidity terms.",
+                scenario="An investor sees two funds both labeled alternative. One owns infrastructure; the other uses a trading strategy. Should they be evaluated as interchangeable?",
+                deeper="• Understand the underlying exposure and strategy.\n• Review liquidity, valuation, fees, and leverage.\n• Consider suitability within the whole portfolio.",
+                question="What should be understood first about an alternative investment?",
+                options=("Its underlying strategy and risks", "Its marketing name", "Its logo"),
+                answer=0,
+                explanation="The underlying exposure and structure determine how the investment may behave.",
+                recall_scenario="A product has attractive historical returns but complex redemption limits.",
+                recall_question="What should receive close review?",
+                recall_options=("Liquidity terms", "Website color", "Ticker length"),
+                recall_answer=0,
+                recall_explanation="Liquidity limits can materially affect whether and when capital can be accessed.",
+            ),
+            Lesson(
+                "Investment Fundamentals",
+                "Diversification Beyond Labels",
+                "Diversification depends on how investments behave together, not simply on owning more product names.",
+                why_it_matters="Assets that appear different may become highly correlated during market stress.",
+                scenario="A portfolio adds three funds that all depend on the same economic factor. Has it necessarily diversified?",
+                deeper="• Examine drivers of return and loss.\n• Test correlations in normal and stressed markets.\n• Avoid concentration hidden behind different labels.",
+                question="What makes an asset a useful diversifier?",
+                options=("Different risk and return drivers", "A different fund name", "A higher fee"),
+                answer=0,
+                explanation="Diversification comes from distinct underlying drivers, especially when conditions change.",
+                recall_scenario="Two strategies look uncorrelated in calm markets but fall together during stress.",
+                recall_question="Which analysis was most important?",
+                recall_options=("Stress correlation", "Logo comparison", "Alphabetical sorting"),
+                recall_answer=0,
+                recall_explanation="Stress behavior reveals diversification limits that normal-period averages can hide.",
+            ),
+            Lesson(
+                "Investment Fundamentals",
+                "Liquidity, Valuation & Fees",
+                "Some alternatives trade infrequently, use model-based valuations, restrict withdrawals, and layer management or performance fees.",
+                why_it_matters="Reported returns may not reveal how quickly value can change or capital can be accessed.",
+                scenario="An investor may need funds next year, but a product locks capital for five years. What is the central mismatch?",
+                deeper="• Match lockups to expected cash needs.\n• Understand valuation frequency and methodology.\n• Evaluate all fees and their effect on net returns.",
+                question="Why must liquidity terms be reviewed before investing?",
+                options=("Capital may not be available when needed", "They change the font", "They guarantee returns"),
+                answer=0,
+                explanation="Lockups and redemption limits can prevent timely access to invested capital.",
+                recall_scenario="A fund reports stable values because holdings are priced quarterly rather than daily.",
+                recall_question="What should the investor recognize?",
+                recall_options=("Apparent stability may reflect valuation timing", "Risk disappeared", "Fees are zero"),
+                recall_answer=0,
+                recall_explanation="Infrequent valuation can smooth reported changes without eliminating economic risk.",
+            ),
+            Lesson(
+                "Investment Fundamentals",
+                "Income, Inflation & Capital Preservation",
+                "Some real assets, private credit, or contractual cash flows may support income or inflation sensitivity, but none provides universal protection.",
+                why_it_matters="A portfolio role should be evaluated using evidence and scenarios, not assumed from a product label.",
+                scenario="A real-asset strategy is described as an inflation hedge. What should be tested before relying on that claim?",
+                deeper="• Identify the mechanism linking returns to inflation.\n• Compare results across different inflation regimes.\n• Consider leverage, costs, and downside risk.",
+                question="What is the right way to assess an inflation-protection claim?",
+                options=("Test the mechanism and evidence", "Assume the label is enough", "Ignore downside risk"),
+                answer=0,
+                explanation="The expected protection should be supported by a clear mechanism and evidence across scenarios.",
+                recall_scenario="An income strategy offers a high yield by taking significant credit risk.",
+                recall_question="What should be evaluated with the income?",
+                recall_options=("Risk of loss and default", "Only the headline yield", "Brand popularity"),
+                recall_answer=0,
+                recall_explanation="Yield must be considered together with the risks taken to generate it.",
+            ),
+            Lesson(
+                "Investment Fundamentals",
+                "Due Diligence & Portfolio Fit",
+                "Due diligence evaluates the manager, strategy, operations, conflicts, performance evidence, legal terms, and fit with an investor's objectives and constraints.",
+                why_it_matters="An attractive strategy can still be unsuitable because of concentration, liquidity, governance, or operational risk.",
+                scenario="A fund has strong returns but unclear valuation controls and key-person dependence. What should happen next?",
+                deeper="• Review people, process, controls, and service providers.\n• Challenge performance and risk assumptions.\n• Assess fit, sizing, and monitoring before commitment.",
+                question="What is the purpose of investment due diligence?",
+                options=("Understand risks, controls, and suitability", "Guarantee performance", "Replace all professional advice"),
+                answer=0,
+                explanation="Due diligence supports an informed suitability decision; it cannot guarantee an outcome.",
+                recall_scenario="A strategy is credible but would create excessive concentration in one risk factor.",
+                recall_question="What is the appropriate conclusion?",
+                recall_options=("Good product, poor portfolio fit", "Automatically invest", "Ignore concentration"),
+                recall_answer=0,
+                recall_explanation="Portfolio fit matters independently from the quality of the product itself.",
+            ),
+        ),
+    }
+)
+
+PRIMARY_TOPICS = ("AWS & Cloud", "AI / ML", "Cybersecurity & Digital Trust")
+
 TOPIC_ALIASES = {
     "AWS Cloud": "AWS & Cloud",
     "Artificial Intelligence": "AI / ML",
@@ -289,12 +472,21 @@ LEARNING_GOALS = {
         ("Cybersecurity & Digital Trust", lesson.title)
         for lesson in LESSONS["Cybersecurity & Digital Trust"]
     ),
+    "Navigate risk and governance decisions": tuple(
+        ("Risk & Governance", lesson.title) for lesson in LESSONS["Risk & Governance"]
+    ),
+    "Understand alternative investments": tuple(
+        ("Investment Fundamentals", lesson.title)
+        for lesson in LESSONS["Investment Fundamentals"]
+    ),
 }
 
 TOPIC_LEARNING_GOALS = {
     "AWS & Cloud": "Build resilient cloud skills",
     "AI / ML": "Use AI responsibly",
     "Cybersecurity & Digital Trust": "Strengthen digital trust",
+    "Risk & Governance": "Navigate risk and governance decisions",
+    "Investment Fundamentals": "Understand alternative investments",
 }
 
 LEARNING_GOAL_SUMMARIES = {
@@ -302,6 +494,41 @@ LEARNING_GOAL_SUMMARIES = {
     "Build resilient cloud skills": "Cloud architecture, security, storage, cost, and event-driven design.",
     "Use AI responsibly": "AI fundamentals, data quality, oversight, evaluation, and privacy.",
     "Strengthen digital trust": "Access, fraud defense, cryptography, zero trust, and incident response.",
+    "Navigate risk and governance decisions": "Risk decisions, BCBS 239, AI controls, issue remediation, and legal-impact assessment.",
+    "Understand alternative investments": "Portfolio role, diversification, liquidity, valuation, fees, and due diligence.",
+}
+
+PREPARED_LEARNING_TOPICS = {
+    "Risk & Decision Making": (
+        "Navigate risk and governance decisions",
+        "Risk & Governance",
+        "Risk-Informed Decision Making",
+    ),
+    "BCBS 239 & Data Governance": (
+        "Navigate risk and governance decisions",
+        "Risk & Governance",
+        "BCBS 239 & Data Governance",
+    ),
+    "Human-in-the-loop AI controls": (
+        "Navigate risk and governance decisions",
+        "Risk & Governance",
+        "Human-in-the-Loop AI Controls",
+    ),
+    "Issues & Errors Management": (
+        "Navigate risk and governance decisions",
+        "Risk & Governance",
+        "Issues & Errors Management",
+    ),
+    "Legal-obligation impact assessments": (
+        "Navigate risk and governance decisions",
+        "Risk & Governance",
+        "Legal-Obligation Impact Assessment",
+    ),
+    "Alternative investments and portfolio diversification": (
+        "Understand alternative investments",
+        "Investment Fundamentals",
+        "Understanding Alternative Investments",
+    ),
 }
 
 DISCOVERY_ITEMS = (
@@ -536,7 +763,10 @@ class LearningService(QObject):
         self._review_state = self.store.review_state(lesson.topic, lesson.title)
 
     def _progress(self) -> dict[str, object]:
-        return self.store.progress_summary(sum(len(items) for items in LESSONS.values()))
+        return self.store.progress_summary(
+            sum(len(LESSONS[topic]) for topic in PRIMARY_TOPICS),
+            set(PRIMARY_TOPICS),
+        )
 
     def _search_results(self) -> list[tuple[str, str]]:
         query = self._search_query.strip().casefold()
@@ -627,7 +857,24 @@ class LearningService(QObject):
 
     @Property("QStringList", constant=True)
     def learningGoals(self) -> list[str]:
-        return list(LEARNING_GOALS)
+        return [TOPIC_LEARNING_GOALS[topic] for topic in PRIMARY_TOPICS]
+
+    @Property("QStringList", constant=True)
+    def preparedLearningTopics(self) -> list[str]:
+        return list(PREPARED_LEARNING_TOPICS)
+
+    @Property("QStringList", constant=True)
+    def topLearningItems(self) -> list[str]:
+        return [*PRIMARY_TOPICS, *PREPARED_LEARNING_TOPICS]
+
+    @Property(str, notify=changed)
+    def currentTopLearningItem(self) -> str:
+        for label, (_, topic, title) in PREPARED_LEARNING_TOPICS.items():
+            if self._topic == topic and (
+                self._lesson().title == title or topic == "Investment Fundamentals"
+            ):
+                return label
+        return self._topic
 
     @Property(str, notify=changed)
     def defaultLearningGoal(self) -> str:
@@ -733,7 +980,7 @@ class LearningService(QObject):
 
     @Property(int, constant=True)
     def progressTotal(self) -> int:
-        return sum(len(items) for items in LESSONS.values())
+        return sum(len(LESSONS[topic]) for topic in PRIMARY_TOPICS)
 
     @Property(int, notify=changed)
     def progressPercent(self) -> int:
@@ -750,7 +997,10 @@ class LearningService(QObject):
     @Property("QStringList", notify=changed)
     def progressTopicItems(self) -> list[str]:
         counts = self._progress()["topic_counts"]
-        return [f"{topic}|{int(counts.get(topic, 0))}|{len(lessons)}" for topic, lessons in LESSONS.items()]
+        return [
+            f"{topic}|{int(counts.get(topic, 0))}|{len(LESSONS[topic])}"
+            for topic in PRIMARY_TOPICS
+        ]
 
     @Property("QStringList", notify=changed)
     def badgeItems(self) -> list[str]:
@@ -937,6 +1187,80 @@ class LearningService(QObject):
         self._open_lesson(topic, title)
         self.celebration.emit("Guided learning path started.")
 
+    @Slot(str, result=str)
+    def createCustomLearningPath(self, request: str) -> str:
+        """Match prepared demo requests, or safely queue an unavailable topic."""
+        clean_request = " ".join(request.strip().split())[:240]
+        if len(clean_request) < 5:
+            return "ERROR|Describe the subject in a few more words."
+
+        normalized = clean_request.casefold()
+        investment_terms = (
+            "alternative investment",
+            "portfolio",
+            "private equity",
+            "private credit",
+            "hedge fund",
+            "real asset",
+            "diversification",
+        )
+        governance_terms = (
+            "risk",
+            "decision making",
+            "bcbs",
+            "data governance",
+            "human in the loop",
+            "human-in-the-loop",
+            "issue management",
+            "error management",
+            "legal obligation",
+            "impact assessment",
+            "reporting governance",
+        )
+
+        if any(term in normalized for term in investment_terms):
+            goal = "Understand alternative investments"
+        elif any(term in normalized for term in governance_terms):
+            goal = "Navigate risk and governance decisions"
+        else:
+            created = self.store.submit_topic_request(clean_request)
+            message = (
+                "Topic request saved locally. A connected release can notify you when a reviewed path is available."
+                if created
+                else "That topic is already in your request list."
+            )
+            return f"REQUESTED|{message}"
+
+        self.selectLearningGoal(goal)
+        return f"STARTED|{goal}"
+
+    @Slot(str, result=bool)
+    def openPreparedLearningTopic(self, subject: str) -> bool:
+        prepared = PREPARED_LEARNING_TOPICS.get(subject)
+        if prepared is None:
+            return False
+        goal, topic, title = prepared
+        sequence = LEARNING_GOALS[goal]
+        try:
+            position = sequence.index((topic, title))
+        except ValueError:
+            return False
+        self._learning_goal = goal
+        self._goal_position = position
+        self.store.set_learning_goal(goal)
+        self.store.set_learning_goal_position(position)
+        if not self._open_lesson(topic, title):
+            return False
+        self.celebration.emit(f"{subject} is ready.")
+        return True
+
+    @Slot(str)
+    def selectTopLearningItem(self, item: str) -> None:
+        if item in PREPARED_LEARNING_TOPICS:
+            self.openPreparedLearningTopic(item)
+        else:
+            self.selectTopic(item)
+
     @Slot()
     def clearLearningGoal(self) -> None:
         self._learning_goal = ""
@@ -951,6 +1275,10 @@ class LearningService(QObject):
         self._reduced_motion = bool(enabled)
         self.store.set_reduced_motion(self._reduced_motion)
         self.changed.emit()
+
+    @Slot(int, int)
+    def saveWindowPosition(self, x: int, y: int) -> None:
+        self.store.set_window_position(x, y)
 
     @Slot()
     def completeWelcome(self) -> None:

@@ -45,7 +45,7 @@ def test_next_lesson_advances_and_persists(tmp_path: Path, monkeypatch) -> None:
 
 
 def test_flagship_lessons_have_complete_learning_stages() -> None:
-    assert sum(len(lessons) for lessons in learning_service.LESSONS.values()) == 15
+    assert sum(len(lessons) for lessons in learning_service.LESSONS.values()) == 25
     for lessons in learning_service.LESSONS.values():
         for lesson in lessons:
             assert lesson.description
@@ -133,6 +133,59 @@ def test_learning_goal_sequences_curated_lessons(tmp_path: Path, monkeypatch) ->
     resumed = make_service(tmp_path, monkeypatch)
     assert resumed.learningGoal == service.learningGoal
     assert resumed.title == service.title
+
+
+def test_custom_goal_matches_prepared_demo_paths(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+
+    result = service.createCustomLearningPath(
+        "I want to understand BCBS 239 and data governance"
+    )
+    assert result == "STARTED|Navigate risk and governance decisions"
+    assert service.learningGoal == "Navigate risk and governance decisions"
+    assert service.topic == "Risk & Governance"
+    assert service.title == "Risk-Informed Decision Making"
+
+    result = service.createCustomLearningPath(
+        "What are the benefits of alternative investments in my portfolio?"
+    )
+    assert result == "STARTED|Understand alternative investments"
+    assert service.topic == "Investment Fundamentals"
+
+
+def test_unknown_custom_goal_is_queued(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+
+    result = service.createCustomLearningPath("Advanced supply-chain forecasting")
+    assert result.startswith("REQUESTED|")
+    assert service.store.topic_requests()[0][1] == "Advanced supply-chain forecasting"
+
+
+def test_each_prepared_topic_opens_its_exact_lesson(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    expected = {
+        "Risk & Decision Making": "Risk-Informed Decision Making",
+        "BCBS 239 & Data Governance": "BCBS 239 & Data Governance",
+        "Human-in-the-loop AI controls": "Human-in-the-Loop AI Controls",
+        "Issues & Errors Management": "Issues & Errors Management",
+        "Legal-obligation impact assessments": "Legal-Obligation Impact Assessment",
+        "Alternative investments and portfolio diversification": "Understanding Alternative Investments",
+    }
+
+    assert service.preparedLearningTopics == list(expected)
+    assert service.topLearningItems == [
+        "AWS & Cloud",
+        "AI / ML",
+        "Cybersecurity & Digital Trust",
+        *expected,
+    ]
+    for subject, title in expected.items():
+        assert service.openPreparedLearningTopic(subject)
+        assert service.title == title
+        assert service.currentTopLearningItem == subject
+
+    service.selectTopLearningItem("BCBS 239 & Data Governance")
+    assert service.title == "BCBS 239 & Data Governance"
 
 
 def test_saved_takeaway_browser_opens_and_removes_note(

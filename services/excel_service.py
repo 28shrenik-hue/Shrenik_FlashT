@@ -53,6 +53,8 @@ class ExcelService:
                 "updated_on",
             ]
         )
+        requests = workbook.create_sheet("Topic Requests")
+        requests.append(["requested_on", "request", "status"])
         workbook.save(self.path)
 
     def _preserve_corrupt_workbook(self) -> None:
@@ -118,6 +120,10 @@ class ExcelService:
                 ]
             )
             changed = True
+        if "Topic Requests" not in workbook.sheetnames:
+            sheet = workbook.create_sheet("Topic Requests")
+            sheet.append(["requested_on", "request", "status"])
+            changed = True
         if changed:
             self._save(workbook)
 
@@ -156,6 +162,42 @@ class ExcelService:
 
     def set_learning_goal_position(self, position: int) -> None:
         self._set_setting("learning_goal_position", max(0, position))
+
+    def window_position(self) -> tuple[int, int] | None:
+        stored_x = self._setting("window_x", None)
+        stored_y = self._setting("window_y", None)
+        if stored_x is None or stored_y is None:
+            return None
+        try:
+            return int(stored_x), int(stored_y)
+        except (TypeError, ValueError):
+            return None
+
+    def set_window_position(self, x: int, y: int) -> None:
+        self._set_setting("window_x", int(x))
+        self._set_setting("window_y", int(y))
+
+    def submit_topic_request(self, request: str) -> bool:
+        clean_request = " ".join(request.strip().split())[:240]
+        if len(clean_request) < 3:
+            return False
+        workbook = load_workbook(self.path)
+        sheet = workbook["Topic Requests"]
+        normalized = clean_request.casefold()
+        for _, stored_request, status in sheet.iter_rows(min_row=2, values_only=True):
+            if str(stored_request or "").casefold() == normalized and status != "Closed":
+                return False
+        sheet.append([datetime.now().isoformat(timespec="seconds"), clean_request, "Requested"])
+        self._save(workbook)
+        return True
+
+    def topic_requests(self) -> list[tuple[str, str, str]]:
+        workbook = load_workbook(self.path)
+        return [
+            (str(row[0]), str(row[1]), str(row[2]))
+            for row in workbook["Topic Requests"].iter_rows(min_row=2, values_only=True)
+            if row[0] and row[1]
+        ]
 
     def reduced_motion(self) -> bool:
         value = self._setting("reduced_motion", False)
@@ -371,18 +413,24 @@ class ExcelService:
                 break
         return xp, streak
 
-    def progress_summary(self, total_lessons: int) -> dict[str, object]:
+    def progress_summary(
+        self, total_lessons: int, included_topics: set[str] | None = None
+    ) -> dict[str, object]:
         workbook = load_workbook(self.path)
         completed = {
             (str(row[1]), str(row[2]))
             for row in workbook["Progress"].iter_rows(min_row=2, values_only=True)
             if row[1] and row[2] and not str(row[2]).endswith(" • Recall")
+            and (included_topics is None or str(row[1]) in included_topics)
         }
         completed_topics = {topic for topic, _ in completed}
         mastered = sum(
             1
             for row in workbook["Reviews"].iter_rows(min_row=2, values_only=True)
-            if row[0] and row[1] and int(row[2] or 0) >= 3
+            if row[0]
+            and row[1]
+            and int(row[2] or 0) >= 3
+            and (included_topics is None or str(row[0]) in included_topics)
         )
         note_count = sum(
             1
@@ -404,7 +452,13 @@ class ExcelService:
             "mastered": mastered,
             "notes": note_count,
             "bookmarks": bookmark_count,
-            "due_reviews": len(self.due_reviews()),
+            "due_reviews": len(
+                [
+                    item
+                    for item in self.due_reviews()
+                    if included_topics is None or item[0] in included_topics
+                ]
+            ),
             "percent": round(completed_count * 100 / max(1, total_lessons)),
             "topic_counts": topic_counts,
         }

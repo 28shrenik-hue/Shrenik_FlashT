@@ -56,14 +56,29 @@ def run() -> int:
         LOGGER.error("QML failed to create a root window: %s", qml_file)
         return 1
 
-    # Always open on the primary display. Using the combined desktop width can
-    # place a frameless tile on a distant external monitor where it appears lost.
+    # Reuse a valid saved position on the primary display. Otherwise, place the
+    # tile at its original upper-right starting location.
     window = engine.rootObjects()[0]
     screen = app.primaryScreen()
     if screen is not None:
         available = screen.availableGeometry()
-        window.setX(available.x() + available.width() - window.width() - 24)
-        window.setY(available.y() + 40)
+        saved_position = learning.store.window_position()
+        if saved_position is not None:
+            saved_x, saved_y = saved_position
+            position_is_visible = (
+                saved_x >= available.x()
+                and saved_y >= available.y()
+                and saved_x + window.width() <= available.x() + available.width()
+                and saved_y + window.height() <= available.y() + available.height()
+            )
+        else:
+            position_is_visible = False
+        if position_is_visible:
+            window.setX(saved_x)
+            window.setY(saved_y)
+        else:
+            window.setX(available.x() + available.width() - window.width() - 24)
+            window.setY(available.y() + 40)
         LOGGER.info(
             "Window ready at x=%s y=%s width=%s height=%s",
             window.x(),

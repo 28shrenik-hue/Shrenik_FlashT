@@ -57,6 +57,26 @@ def test_learning_preferences_round_trip(tmp_path: Path) -> None:
     assert resumed.welcome_seen()
 
 
+def test_topic_request_is_saved_once(tmp_path: Path) -> None:
+    store = ExcelService(tmp_path / "FlashTile.xlsx")
+    assert store.submit_topic_request("Quantum-safe vendor governance")
+    assert not store.submit_topic_request("  quantum-safe vendor governance  ")
+    assert store.topic_requests() == [
+        (
+            store.topic_requests()[0][0],
+            "Quantum-safe vendor governance",
+            "Requested",
+        )
+    ]
+
+
+def test_window_position_round_trip(tmp_path: Path) -> None:
+    store = ExcelService(tmp_path / "FlashTile.xlsx")
+    assert store.window_position() is None
+    store.set_window_position(42, 84)
+    assert ExcelService(tmp_path / "FlashTile.xlsx").window_position() == (42, 84)
+
+
 def test_confidence_and_review_result_update_mastery(tmp_path: Path) -> None:
     store = ExcelService(tmp_path / "test.xlsx")
     topic = "AWS & Cloud"
