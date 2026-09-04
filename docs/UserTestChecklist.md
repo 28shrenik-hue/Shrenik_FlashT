@@ -20,7 +20,7 @@ Windows, then verify:
 - A correct answer enables completion and awards XP once.
 - Confidence selection schedules the next review.
 - Next flash loads new content with the approved transition.
-- The learning-goal control starts each of the four curated paths.
+- Each of the three learning goals opens the matching category and remains within it.
 - Next flash follows the selected path across topics and resumes after relaunch.
 
 ## Learning tools
@@ -30,10 +30,11 @@ Windows, then verify:
 - Bookmark saves the current lesson and Saved Review can reopen it.
 - Quick Notes saves, edits, clears, and restores a takeaway after relaunch.
 - Saved Takeaways lists every note and can reopen or remove it.
+- Selecting a category filters lesson search and every subsequent lesson to that category.
 - The center breathing control completes its 60-second cycle and records no data.
 - Daily Discovery opens a complete offline card and Show Another loads a different card.
 - The header Team Board control opens a complete six-member capability demo.
-- Team Board is clearly labeled Demo Mode and contains no notes, answers, or confidence data.
+- Team Board contains no notes, answers, or confidence data.
 - Weekly XP, streak, lesson goal, progress bar, and all six contributors fit without clipping.
 - The Team Board shows the weekly challenge and team-badge reward.
 - Clicking XP opens Personal Progress with accurate overall and per-topic metrics.
@@ -41,7 +42,7 @@ Windows, then verify:
 - Lesson Search finds lessons by title, topic, or description and opens the result.
 - The `?` control starts a complete seven-step Guided Tour.
 - Every Daily Discovery card displays a named source link.
-- Demo Reset requires confirmation, creates a timestamped backup, and clears demo activity.
+- Reset Progress requires confirmation, creates a timestamped backup, and clears local activity.
 
 ## Persistence and recovery
 

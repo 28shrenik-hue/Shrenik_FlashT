@@ -4,6 +4,9 @@
 - [x] Automated service and persistence tests
 - [x] Offscreen QML load
 - [x] Compact 410 × 690 geometry
+- [x] Welcome Tile appears on every launch inside the approved geometry
+- [x] Welcome proceeds to Learning Goal selection before opening the current lesson
+- [x] Welcome can be replayed from the logo or F2
 - [x] Branding asset integrity
 - [x] Workbook backup and corrupt-file recovery
 - [x] macOS launcher preflight
@@ -15,10 +18,11 @@
 - [x] Saved-takeaways browser
 - [x] Reduced-motion preference and core keyboard shortcuts
 - [x] Date-rotating offline Daily Discovery and named footer hover labels
-- [x] Judge-ready Team Board capability demo with explicit sample-data labeling
+- [x] Judge-ready Team Board capability preview with local illustrative data
 - [x] Personal progress and achievement badges
 - [x] Lesson search and seven-step Guided Tour
-- [x] Safely backed-up Demo Reset
+- [x] Category selection keeps search and subsequent lessons inside that category
+- [x] Safely backed-up progress reset
 - [x] Official source links for Daily Discovery
 - [x] Weekly Team Board challenge
 - [ ] User acceptance pass on macOS

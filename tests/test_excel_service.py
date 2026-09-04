@@ -48,11 +48,13 @@ def test_learning_preferences_round_trip(tmp_path: Path) -> None:
     store.set_learning_goal("Use AI responsibly")
     store.set_learning_goal_position(3)
     store.set_reduced_motion(True)
+    store.set_welcome_seen(True)
 
     resumed = ExcelService(tmp_path / "test.xlsx")
     assert resumed.learning_goal() == "Use AI responsibly"
     assert resumed.learning_goal_position() == 3
     assert resumed.reduced_motion()
+    assert resumed.welcome_seen()
 
 
 def test_confidence_and_review_result_update_mastery(tmp_path: Path) -> None:

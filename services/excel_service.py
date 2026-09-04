@@ -35,6 +35,7 @@ class ExcelService:
         settings = workbook.create_sheet("Settings")
         settings.append(["key", "value"])
         settings.append(["selected_topic", "AWS & Cloud"])
+        settings.append(["welcome_seen_rc15", False])
         bookmarks = workbook.create_sheet("Bookmarks")
         bookmarks.append(["topic", "lesson", "saved_on"])
         notes = workbook.create_sheet("Notes")
@@ -164,6 +165,15 @@ class ExcelService:
 
     def set_reduced_motion(self, enabled: bool) -> None:
         self._set_setting("reduced_motion", bool(enabled))
+
+    def welcome_seen(self) -> bool:
+        value = self._setting("welcome_seen_rc15", False)
+        if isinstance(value, bool):
+            return value
+        return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+    def set_welcome_seen(self, seen: bool) -> None:
+        self._set_setting("welcome_seen_rc15", bool(seen))
 
     def lesson_index(self, topic: str) -> int:
         return int(self._setting(f"lesson_index::{topic}", 0) or 0)

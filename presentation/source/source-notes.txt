@@ -1,0 +1,10 @@
+Primary project sources:
+- /Users/shree/Documents/Codex/2026-09-03/what-is-the-latest-version/FlashTile-RC15/README.md
+- /Users/shree/Documents/Codex/2026-09-03/what-is-the-latest-version/FlashTile-RC15/docs/Proposal.md
+- /Users/shree/Documents/Codex/2026-09-03/what-is-the-latest-version/FlashTile-RC15/docs/Vision.md
+- /Users/shree/Documents/Codex/2026-09-03/what-is-the-latest-version/FlashTile-RC15/docs/LearningMethod.md
+- /Users/shree/Documents/Codex/2026-09-03/what-is-the-latest-version/FlashTile-RC15/docs/Roadmap.md
+- /Users/shree/Documents/Codex/2026-09-03/what-is-the-latest-version/FlashTile-RC15/services/learning_service.py
+- Generated screenshots rendered directly from FlashTile RC15 QML in this workspace.
+
+No external stock assets or external numerical claims are used.

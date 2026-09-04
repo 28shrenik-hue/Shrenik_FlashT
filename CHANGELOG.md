@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.0-rc15 — Guided Welcome
+
+- Added an in-tile welcome experience using the existing 3D FlashTile logo.
+- Added concise Learn, Practice, and Progress value cues plus a local-data notice.
+- Added the complete Welcome → Learning Goal → Learning sequence on every application launch.
+- Added an in-tile Learning Goal step between Welcome and the first lesson.
+- Made the welcome replayable from the header logo or the F2 shortcut.
+- Removed visible Demo wording from the application while keeping team data local and illustrative.
+- Scoped lesson search and continuous Next Lesson navigation to the selected category.
+- Replaced the ambiguous mixed-topic default with three one-to-one Learning Goal mappings and migrated existing saved selections to their current category.
+- Preserved the approved 410 × 690 geometry, glass treatment, swivel, footer, and learning stages.
+- Added regression coverage for the launch sequence and safely backed-up progress reset.
+- Corrected the cross-platform test workflow to invoke pytest through Python.
+
 ## 1.0.0-rc14 — Capability Showcase
 
 - Added Personal Progress with overall and per-topic completion, mastery, due-review, XP, and streak metrics.

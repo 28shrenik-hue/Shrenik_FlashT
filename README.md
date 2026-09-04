@@ -9,16 +9,18 @@ expand into a conventional full-screen application.
 ## v1.0 release-candidate experience
 
 - One compact fixed 410 × 690 floating tile
+- Every-launch Welcome Tile with product context, Learning Goal selection, and a direct Begin Learning action
+- Welcome → Learning Goal → Learning sequence on every fresh application launch
 - Original 3D liquid-glass FlashTile logo integrated into the compact header
 - Premium glass styling and mouse-position swivel
 - Fifteen curated lessons across AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust
-- Four guided learning-goal paths that sequence relevant curated lessons locally
+- Three category-aligned learning-goal paths that sequence relevant curated lessons locally
 - Date-rotating Daily Discovery cards for general knowledge, history, and major milestones
-- Judge-ready Team Board capability demo with sample progress and contributor data
+- Team Board capability preview with local illustrative progress and contributor data
 - Weekly team challenge with a shared target and team-badge reward
 - Personal Progress with topic completion, mastery, due reviews, and six achievement badges
-- Search across all fifteen lesson titles, topics, and descriptions
-- Seven-step Guided Tour and safely backed-up Demo Reset
+- Category-scoped search across the selected topic's lesson titles and descriptions
+- Seven-step Guided Tour and safely backed-up progress reset
 - Visible authoritative source links on every Daily Discovery card
 - Continuous curated lessons with no daily stopping point
 - Structured Core Concept → Practical Scenario → Go Deeper → Knowledge Check → Completion lessons
@@ -28,7 +30,7 @@ expand into a conventional full-screen application.
 - Optional in-tile 60-second breathing reset with no wellness data collection
 - Persistent reduced-motion mode and keyboard shortcuts for core learning tools
 - Named hover labels for Learning Goals, Saved Lessons, Meditation, Daily Discovery, and Quick Notes
-- Explicit Demo Mode labeling for team features that are not yet connected to shared cloud sync
+- Team features remain local and are not yet connected to shared cloud sync
 - Primary-screen-safe startup positioning on multi-monitor Macs and PCs
 - Restrained perspective slide, depth scale, light sweep, and background parallax between flashes
 - No dashboard, sidebar, social feed, or full-screen navigation
@@ -74,7 +76,7 @@ scripts\build_windows.bat
 The no-Python-required package is created at:
 
 ```text
-release\FlashTile-v1.0.0-rc14-win64.zip
+release\FlashTile-v1.0.0-rc15-win64.zip
 ```
 
 The same build can run from the **Windows release package** GitHub Actions

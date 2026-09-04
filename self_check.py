@@ -76,8 +76,10 @@ def check_data_and_learning() -> None:
                 raise RuntimeError("Expected three flagship learning topics")
             if sum(len(lessons) for lessons in learning_service.LESSONS.values()) != 15:
                 raise RuntimeError("Expected fifteen curated lessons")
-            if len(learning.learningGoals) != 4:
-                raise RuntimeError("Expected four guided learning paths")
+            if len(learning.learningGoals) != 3:
+                raise RuntimeError("Expected three category-aligned learning paths")
+            if learning.learningGoal != "Build resilient cloud skills":
+                raise RuntimeError("Legacy mixed-topic goal was not migrated safely")
             if not learning.reducedMotion:
                 raise RuntimeError("Reduced-motion preference did not persist")
             if not all(
@@ -101,8 +103,11 @@ def check_data_and_learning() -> None:
                     learning.teamChallenge,
                 ]
             ):
-                raise RuntimeError("Team Board demo data is incomplete")
-            if len(learning.badgeItems) != 6 or learning.searchResultCount != 15:
+                raise RuntimeError("Team Board data is incomplete")
+            if (
+                len(learning.badgeItems) != 6
+                or learning.searchResultCount != len(learning_service.LESSONS[learning.topic])
+            ):
                 raise RuntimeError("Progress, badges, or lesson search is incomplete")
             if learning.tourCount != 7 or not learning.tourTitle:
                 raise RuntimeError("Guided Tour is incomplete")
@@ -127,7 +132,7 @@ def check_qml() -> None:
     os.environ.setdefault("QT_QUICK_BACKEND", "software")
     os.environ.setdefault("QT_QUICK_CONTROLS_STYLE", "Basic")
 
-    from PySide6.QtCore import QUrl
+    from PySide6.QtCore import QMetaObject, QObject, QUrl
     from PySide6.QtGui import QGuiApplication
     from PySide6.QtQml import QQmlApplicationEngine
 
@@ -136,8 +141,10 @@ def check_qml() -> None:
 
     with TemporaryDirectory() as folder:
         original_store = learning_service.ExcelService
+        workbook_path = Path(folder) / "FlashTile.xlsx"
+        ExcelService(workbook_path).set_welcome_seen(True)
         learning_service.ExcelService = lambda: ExcelService(
-            Path(folder) / "FlashTile.xlsx"
+            workbook_path
         )
         try:
             app = QGuiApplication.instance() or QGuiApplication([])
@@ -155,6 +162,44 @@ def check_qml() -> None:
                     f"Unexpected tile size: {window.width()}x{window.height()}"
                 )
             app.processEvents()
+            welcome = window.findChild(QObject, "welcomeLayer")
+            continue_button = window.findChild(QObject, "welcomeContinueButton")
+            start_button = window.findChild(QObject, "startLearningButton")
+            if welcome is None or continue_button is None or start_button is None:
+                raise RuntimeError("Welcome Tile controls were not created")
+            if not bool(welcome.property("visible")):
+                raise RuntimeError("Welcome Tile was not shown on application launch")
+            if not QMetaObject.invokeMethod(continue_button, "click"):
+                raise RuntimeError("Learning Goal action could not be invoked")
+            app.processEvents()
+            if int(window.property("welcomeStep")) != 1:
+                raise RuntimeError("Welcome Tile did not open Learning Goals")
+            if not QMetaObject.invokeMethod(start_button, "click"):
+                raise RuntimeError("Begin Learning action could not be invoked")
+            app.processEvents()
+            if bool(welcome.property("visible")) or not learning.welcomeSeen:
+                raise RuntimeError("Start Learning did not open the learning experience")
+            mapped_goals = {
+                "Build resilient cloud skills": (
+                    "AWS & Cloud",
+                    "AWS Global Infrastructure",
+                ),
+                "Use AI responsibly": ("AI / ML", "How Models Learn"),
+                "Strengthen digital trust": (
+                    "Cybersecurity & Digital Trust",
+                    "The Principle of Least Privilege",
+                ),
+            }
+            for goal, (expected_topic, expected_title) in mapped_goals.items():
+                window.setProperty("onboardingGoal", goal)
+                if not QMetaObject.invokeMethod(start_button, "click"):
+                    raise RuntimeError(f"Could not begin mapped goal: {goal}")
+                app.processEvents()
+                if learning.topic != expected_topic or learning.title != expected_title:
+                    raise RuntimeError(
+                        f"Goal mapping failed for {goal}: "
+                        f"{learning.topic} / {learning.title}"
+                    )
         finally:
             learning_service.ExcelService = original_store
 

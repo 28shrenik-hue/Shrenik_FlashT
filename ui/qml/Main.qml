@@ -24,6 +24,12 @@ ApplicationWindow {
     property color feedbackColor: "#9FB0CF"
     property int resetSeconds: 60
     property int breathElapsed: 0
+    property bool welcomePreview: false
+    property bool onboardingComplete: false
+    property int welcomeStep: 0
+    property string onboardingGoal: learningService.learningGoal !== ""
+        ? learningService.learningGoal
+        : learningService.defaultLearningGoal
     readonly property int breathPosition: breathElapsed % 12
     readonly property string breathPhase: breathPosition < 4 ? "Inhale" : (breathPosition < 6 ? "Hold" : "Exhale")
     readonly property int breathCount: breathPosition < 4 ? 4 - breathPosition : (breathPosition < 6 ? 6 - breathPosition : 12 - breathPosition)
@@ -43,6 +49,26 @@ ApplicationWindow {
     function advanceLesson() {
         learningService.nextLesson()
         flowStep = 0
+        selectedAnswer = -1
+        feedbackText = ""
+    }
+
+    function openWelcome() {
+        welcomeStep = 0
+        onboardingGoal = learningService.learningGoal !== ""
+            ? learningService.learningGoal
+            : learningService.defaultLearningGoal
+        welcomePreview = true
+        welcomeLayer.forceActiveFocus()
+    }
+
+    function startLearning() {
+        learningService.selectLearningGoal(onboardingGoal)
+        learningService.completeWelcome()
+        onboardingComplete = true
+        welcomePreview = false
+        welcomeStep = 0
+        flowStep = learningService.reviewMode ? 1 : 0
         selectedAnswer = -1
         feedbackText = ""
     }
@@ -97,6 +123,7 @@ ApplicationWindow {
                     anchors.fill: parent
                     spacing: 6
                     Rectangle {
+                        id: brandLogo
                         Layout.preferredWidth: 40
                         Layout.preferredHeight: 40
                         radius: 12
@@ -112,6 +139,17 @@ ApplicationWindow {
                             smooth: true
                             mipmap: true
                         }
+                        Accessible.role: Accessible.Button
+                        Accessible.name: "About FlashTile"
+                        MouseArea {
+                            anchors.fill: parent
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: window.openWelcome()
+                        }
+                        ToolTip.visible: brandLogoHover.hovered
+                        ToolTip.text: "About FlashTile"
+                        ToolTip.delay: 450
+                        HoverHandler { id: brandLogoHover }
                     }
                     Column {
                         spacing: 1
@@ -155,10 +193,10 @@ ApplicationWindow {
                         text: "👥"
                         flat: true
                         Layout.preferredWidth: 30
-                        Accessible.name: "Open Team Board demo"
+                        Accessible.name: "Open Team Board"
                         onClicked: teamBoardPopup.open()
                         ToolTip.visible: hovered
-                        ToolTip.text: "Team Board • Demo"
+                        ToolTip.text: "Team Board"
                         ToolTip.delay: 450
                         contentItem: Text {
                             text: parent.text
@@ -945,6 +983,483 @@ ApplicationWindow {
         }
     }
 
+    Rectangle {
+        id: welcomeLayer
+        objectName: "welcomeLayer"
+        anchors.fill: parent
+        z: 100
+        visible: !window.onboardingComplete || window.welcomePreview
+        focus: visible
+        radius: 30
+        border.width: 1
+        border.color: "#355A95"
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: "#111A33" }
+            GradientStop { position: 0.52; color: "#090F1E" }
+            GradientStop { position: 1.0; color: "#050912" }
+        }
+        Accessible.name: "Welcome to FlashTile"
+        Accessible.description: "An introduction to the FlashTile learning companion"
+
+        onVisibleChanged: {
+            if (visible)
+                forceActiveFocus()
+        }
+        Keys.onEscapePressed: function(event) {
+            if (window.onboardingComplete) {
+                window.welcomePreview = false
+                event.accepted = true
+            }
+        }
+
+        Item {
+            anchors.fill: parent
+            clip: true
+            opacity: 0.24
+            Repeater {
+                model: 18
+                Rectangle {
+                    required property int index
+                    width: index % 4 === 0 ? 3 : 2
+                    height: width
+                    radius: width / 2
+                    color: index % 3 === 0 ? "#5CE1FF" : "#8175FF"
+                    x: ((index * 83) % 410) + (learningService.reducedMotion ? 0 : welcomeCard.tiltY * (0.35 + (index % 3) * 0.2))
+                    y: ((index * 127) % 690) + (learningService.reducedMotion ? 0 : welcomeCard.tiltX * (0.35 + (index % 4) * 0.15))
+                    Behavior on x { enabled: !learningService.reducedMotion; NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+                    Behavior on y { enabled: !learningService.reducedMotion; NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+                }
+            }
+        }
+
+        MouseArea {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            height: 58
+            acceptedButtons: Qt.LeftButton
+            onPressed: window.startSystemMove()
+        }
+
+        Button {
+            anchors.right: parent.right
+            anchors.rightMargin: 17
+            anchors.top: parent.top
+            anchors.topMargin: 13
+            width: 36
+            height: 34
+            z: 2
+            text: "×"
+            flat: true
+            Accessible.name: "Close FlashTile"
+            onClicked: Qt.quit()
+            contentItem: Text {
+                text: parent.text
+                color: "#AAB8D5"
+                font.pixelSize: 22
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
+
+        Rectangle {
+            id: welcomeCard
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: 20
+            anchors.rightMargin: 20
+            anchors.topMargin: 58
+            anchors.bottomMargin: 20
+            radius: 28
+            clip: true
+            border.width: 1
+            border.color: welcomeHover.hovered ? "#58DFFF" : "#3C5E9D"
+            color: "#101C39"
+            transformOrigin: Item.Center
+            property real tiltX: 0
+            property real tiltY: 0
+            scale: welcomeHover.hovered && !learningService.reducedMotion ? 1.012 : 1
+
+            Behavior on scale { enabled: !learningService.reducedMotion; NumberAnimation { duration: 170; easing.type: Easing.OutCubic } }
+            Behavior on tiltX { enabled: !learningService.reducedMotion; SpringAnimation { spring: 3; damping: 0.35 } }
+            Behavior on tiltY { enabled: !learningService.reducedMotion; SpringAnimation { spring: 3; damping: 0.35 } }
+            Behavior on border.color { ColorAnimation { duration: 180 } }
+
+            transform: [
+                Rotation {
+                    origin.x: welcomeCard.width / 2
+                    origin.y: welcomeCard.height / 2
+                    axis { x: 1; y: 0; z: 0 }
+                    angle: welcomeCard.tiltX
+                },
+                Rotation {
+                    origin.x: welcomeCard.width / 2
+                    origin.y: welcomeCard.height / 2
+                    axis { x: 0; y: 1; z: 0 }
+                    angle: welcomeCard.tiltY
+                }
+            ]
+
+            Rectangle {
+                anchors.fill: parent
+                anchors.margins: 1
+                radius: 27
+                opacity: 0.94
+                gradient: Gradient {
+                    GradientStop { position: 0; color: "#17396A" }
+                    GradientStop { position: 0.48; color: "#141F42" }
+                    GradientStop { position: 1; color: "#24133D" }
+                }
+            }
+
+            Rectangle {
+                width: 210
+                height: 210
+                radius: 105
+                x: Math.max(-60, Math.min(welcomeCard.width - width + 60, welcomeHover.point.position.x - width / 2))
+                y: Math.max(-60, Math.min(welcomeCard.height - height + 60, welcomeHover.point.position.y - height / 2))
+                color: "#5CE1FF"
+                opacity: welcomeHover.hovered ? 0.10 : 0
+                Behavior on opacity { enabled: !learningService.reducedMotion; NumberAnimation { duration: 200 } }
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 22
+                spacing: 8
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: visible ? 142 : 0
+                    visible: window.welcomeStep === 0
+                    Image {
+                        id: welcomeLogo
+                        anchors.centerIn: parent
+                        width: 150
+                        height: 136
+                        source: "../../assets/branding/FlashTile_3D_Logo.png"
+                        sourceClipRect: Qt.rect(185, 70, 880, 800)
+                        fillMode: Image.PreserveAspectCrop
+                        smooth: true
+                        mipmap: true
+                        SequentialAnimation on scale {
+                            running: welcomeLayer.visible && !learningService.reducedMotion
+                            loops: Animation.Infinite
+                            NumberAnimation { from: 1; to: 1.025; duration: 1400; easing.type: Easing.InOutSine }
+                            NumberAnimation { from: 1.025; to: 1; duration: 1400; easing.type: Easing.InOutSine }
+                        }
+                    }
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    visible: window.welcomeStep === 0
+                    text: "WELCOME TO FLASHTILE"
+                    color: "#5CE1FF"
+                    font.pixelSize: 11
+                    font.bold: true
+                    font.letterSpacing: 1.5
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                Text {
+                    Layout.fillWidth: true
+                    visible: window.welcomeStep === 0
+                    text: "Knowledge that finds you."
+                    color: "white"
+                    font.pixelSize: 23
+                    font.bold: true
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                Text {
+                    Layout.fillWidth: true
+                    visible: window.welcomeStep === 0
+                    text: "Personalized, bite-sized learning delivered directly into your daily workflow."
+                    color: "#C9D6F2"
+                    font.pixelSize: 13
+                    lineHeight: 1.18
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: visible ? 78 : 0
+                    visible: window.welcomeStep === 0
+                    spacing: 7
+                    Repeater {
+                        model: [
+                            ["LEARN", "Structured\nlessons", "#5CE1FF"],
+                            ["PRACTICE", "Real-world\nscenarios", "#FFB14A"],
+                            ["PROGRESS", "XP and\nmastery", "#68EDC6"]
+                        ]
+                        Rectangle {
+                            required property var modelData
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            radius: 13
+                            color: "#152746"
+                            border.width: 1
+                            border.color: modelData[2]
+                            Column {
+                                anchors.centerIn: parent
+                                spacing: 4
+                                Text {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: modelData[0]
+                                    color: modelData[2]
+                                    font.pixelSize: 9
+                                    font.bold: true
+                                    font.letterSpacing: 0.8
+                                }
+                                Text {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: modelData[1]
+                                    color: "#DCE9FA"
+                                    font.pixelSize: 10
+                                    lineHeight: 1.05
+                                    horizontalAlignment: Text.AlignHCenter
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: visible ? 43 : 0
+                    visible: window.welcomeStep === 0
+                    radius: 12
+                    color: "#10243A"
+                    border.color: "#345B67"
+                    Text {
+                        anchors.centerIn: parent
+                        width: parent.width - 18
+                        text: "Your learning progress stays on this device."
+                        color: "#A8E5DA"
+                        font.pixelSize: 10
+                        wrapMode: Text.WordWrap
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                }
+
+                ColumnLayout {
+                    visible: window.welcomeStep === 1
+                    Layout.fillWidth: true
+                    Layout.fillHeight: visible
+                    spacing: 10
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 86
+                        Image {
+                            anchors.centerIn: parent
+                            width: 94
+                            height: 84
+                            source: "../../assets/branding/FlashTile_3D_Logo.png"
+                            sourceClipRect: Qt.rect(185, 70, 880, 800)
+                            fillMode: Image.PreserveAspectCrop
+                            smooth: true
+                            mipmap: true
+                        }
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        text: "CHOOSE YOUR LEARNING GOAL"
+                        color: "#5CE1FF"
+                        font.pixelSize: 11
+                        font.bold: true
+                        font.letterSpacing: 1.3
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        text: "What would you like to learn?"
+                        color: "white"
+                        font.pixelSize: 21
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        text: "Choose a path now. You can change it anytime from Learning Goals."
+                        color: "#B7C7E1"
+                        font.pixelSize: 11
+                        wrapMode: Text.WordWrap
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 7
+                        Repeater {
+                            model: learningService.learningGoals
+                            Button {
+                                required property string modelData
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 43
+                                text: modelData
+                                checkable: true
+                                checked: window.onboardingGoal === modelData
+                                activeFocusOnTab: true
+                                Accessible.name: "Learning goal: " + modelData
+                                onClicked: window.onboardingGoal = modelData
+                                background: Rectangle {
+                                    radius: 12
+                                    color: parent.checked ? "#234B70" : "#152746"
+                                    border.width: 1
+                                    border.color: parent.checked ? "#68EDC6" : "#3A5274"
+                                }
+                                contentItem: Text {
+                                    text: parent.text
+                                    color: parent.checked ? "#F3FFFF" : "#D1DDF0"
+                                    font.pixelSize: 11
+                                    font.bold: parent.checked
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    elide: Text.ElideRight
+                                }
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 62
+                        radius: 12
+                        color: "#10243A"
+                        border.color: "#345B67"
+                        Text {
+                            anchors.centerIn: parent
+                            width: parent.width - 20
+                            text: learningService.describeLearningGoal(window.onboardingGoal)
+                            color: "#A8E5DA"
+                            font.pixelSize: 10
+                            lineHeight: 1.12
+                            wrapMode: Text.WordWrap
+                            horizontalAlignment: Text.AlignHCenter
+                        }
+                    }
+
+                    Item { Layout.fillHeight: true }
+
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: 8
+                        Button {
+                            Layout.preferredWidth: 82
+                            Layout.preferredHeight: 46
+                            text: "Back"
+                            activeFocusOnTab: true
+                            onClicked: window.welcomeStep = 0
+                            background: Rectangle {
+                                radius: 13
+                                color: parent.hovered ? "#203454" : "#152746"
+                                border.width: 1
+                                border.color: "#456087"
+                            }
+                            contentItem: Text {
+                                text: parent.text
+                                color: "#D1DDF0"
+                                font.pixelSize: 12
+                                font.bold: true
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+                        Button {
+                            id: startLearningButton
+                            objectName: "startLearningButton"
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 46
+                            text: "Begin Learning  →"
+                            activeFocusOnTab: true
+                            Accessible.name: "Begin Learning"
+                            Accessible.description: "Save the selected learning goal and open its first lesson"
+                            onClicked: window.startLearning()
+                            background: Rectangle {
+                                radius: 14
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: "#FF9900" }
+                                    GradientStop { position: 1; color: "#7B4DFF" }
+                                }
+                            }
+                            contentItem: Text {
+                                text: parent.text
+                                color: "white"
+                                font.pixelSize: 13
+                                font.bold: true
+                                horizontalAlignment: Text.AlignHCenter
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
+                    }
+                }
+
+                Item {
+                    visible: window.welcomeStep === 0
+                    Layout.fillHeight: visible
+                }
+
+                Button {
+                    id: welcomeContinueButton
+                    objectName: "welcomeContinueButton"
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: visible ? 48 : 0
+                    visible: window.welcomeStep === 0
+                    text: "Continue  →"
+                    activeFocusOnTab: true
+                    Accessible.name: "Continue to Learning Goals"
+                    Accessible.description: "Choose what you want to learn"
+                    onClicked: window.welcomeStep = 1
+                    background: Rectangle {
+                        radius: 14
+                        gradient: Gradient {
+                            GradientStop { position: 0; color: "#FF9900" }
+                            GradientStop { position: 1; color: "#7B4DFF" }
+                        }
+                    }
+                    contentItem: Text {
+                        text: parent.text
+                        color: "white"
+                        font.pixelSize: 14
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    visible: window.welcomeStep === 0
+                    text: window.onboardingComplete ? "Press Esc to return • F2 opens this introduction" : "A few focused minutes is enough to begin."
+                    color: "#7F96B8"
+                    font.pixelSize: 10
+                    horizontalAlignment: Text.AlignHCenter
+                }
+            }
+
+            HoverHandler {
+                id: welcomeHover
+                onPointChanged: {
+                    if (learningService.reducedMotion)
+                        return
+                    const nx = (point.position.x / welcomeCard.width - 0.5) * 2
+                    const ny = (point.position.y / welcomeCard.height - 0.5) * 2
+                    welcomeCard.tiltY = nx * 5
+                    welcomeCard.tiltX = -ny * 5
+                }
+                onHoveredChanged: {
+                    if (!hovered) {
+                        welcomeCard.tiltX = 0
+                        welcomeCard.tiltY = 0
+                    }
+                }
+            }
+        }
+    }
+
     Popup {
         id: teamBoardPopup
         objectName: "teamBoardPopup"
@@ -979,21 +1494,6 @@ ApplicationWindow {
                     font.letterSpacing: 1.5
                 }
                 Item { Layout.fillWidth: true }
-                Rectangle {
-                    Layout.preferredWidth: 82
-                    Layout.preferredHeight: 24
-                    radius: 12
-                    color: "#3B2F16"
-                    border.color: "#A88743"
-                    Text {
-                        anchors.centerIn: parent
-                        text: "DEMO MODE"
-                        color: "#FFCB68"
-                        font.pixelSize: 9
-                        font.bold: true
-                        font.letterSpacing: 0.8
-                    }
-                }
             }
             Text {
                 Layout.fillWidth: true
@@ -1136,13 +1636,6 @@ ApplicationWindow {
                         }
                     }
                 }
-            }
-            Text {
-                Layout.fillWidth: true
-                text: "Sample data • ready for team identity and shared sync"
-                color: "#758CA9"
-                font.pixelSize: 9
-                horizontalAlignment: Text.AlignHCenter
             }
             Button {
                 Layout.fillWidth: true
@@ -1884,7 +2377,7 @@ ApplicationWindow {
                 onClicked: { progressPopup.close(); achievementsPopup.open() }
             }
             RowLayout { Layout.fillWidth: true; spacing: 8
-                Button { Layout.fillWidth: true; Layout.preferredHeight: 40; text: "Reset Demo"; onClicked: demoResetPopup.open() }
+                Button { Layout.fillWidth: true; Layout.preferredHeight: 40; text: "Reset Progress"; onClicked: demoResetPopup.open() }
                 Button { Layout.fillWidth: true; Layout.preferredHeight: 40; text: "Close"; onClicked: progressPopup.close() }
             }
         }
@@ -1942,7 +2435,7 @@ ApplicationWindow {
             spacing: 10
             Text { Layout.fillWidth: true; text: "LESSON SEARCH"; color: "#83E8FF"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.5; horizontalAlignment: Text.AlignHCenter }
             TextField {
-                id: lessonSearch; Layout.fillWidth: true; placeholderText: "Search all 15 lessons…"; Accessible.name: "Search all lessons"
+                id: lessonSearch; Layout.fillWidth: true; placeholderText: "Search " + learningService.topic + " lessons…"; Accessible.name: "Search lessons in " + learningService.topic
                 onTextChanged: learningService.searchLessons(text)
             }
             Text { text: learningService.searchResultCount + " result" + (learningService.searchResultCount === 1 ? "" : "s"); color: "#8FA5C2"; font.pixelSize: 10 }
@@ -2010,13 +2503,13 @@ ApplicationWindow {
         background: Rectangle { radius: 26; color: "#261A24"; border.width: 1; border.color: "#B45C72" }
         contentItem: ColumnLayout {
             spacing: 13
-            Text { Layout.fillWidth: true; text: "RESET DEMO DATA?"; color: "#FF9DB4"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.4; horizontalAlignment: Text.AlignHCenter }
+            Text { Layout.fillWidth: true; text: "RESET LOCAL PROGRESS?"; color: "#FF9DB4"; font.pixelSize: 12; font.bold: true; font.letterSpacing: 1.4; horizontalAlignment: Text.AlignHCenter }
             Text { Layout.fillWidth: true; text: "This clears lesson progress, saved lessons, notes, review status, XP, and streaks."; color: "white"; font.pixelSize: 15; font.bold: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
-            Text { Layout.fillWidth: true; text: "FlashTile creates a timestamped backup first, so the current demo can be recovered."; color: "#B7C7E1"; font.pixelSize: 12; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
+            Text { Layout.fillWidth: true; text: "FlashTile creates a timestamped backup first, so your current progress can be recovered."; color: "#B7C7E1"; font.pixelSize: 12; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
             Item { Layout.fillHeight: true }
             RowLayout { Layout.fillWidth: true; spacing: 8
                 Button { Layout.fillWidth: true; Layout.preferredHeight: 42; text: "Cancel"; onClicked: demoResetPopup.close() }
-                Button { Layout.fillWidth: true; Layout.preferredHeight: 42; text: "Reset Demo"; onClicked: { learningService.resetDemoData(); flowStep = 0; selectedAnswer = -1; demoResetPopup.close(); progressPopup.close() } }
+                Button { Layout.fillWidth: true; Layout.preferredHeight: 42; text: "Reset Progress"; onClicked: { learningService.resetDemoData(); flowStep = 0; selectedAnswer = -1; demoResetPopup.close(); progressPopup.close() } }
             }
         }
     }
@@ -2131,42 +2624,55 @@ ApplicationWindow {
 
     Shortcut {
         sequence: "Ctrl+G"
+        enabled: !welcomeLayer.visible
         onActivated: goalPopup.open()
     }
 
     Shortcut {
         sequence: "Ctrl+B"
+        enabled: !welcomeLayer.visible
         onActivated: bookmarksPopup.open()
     }
 
     Shortcut {
         sequence: "Ctrl+N"
+        enabled: !welcomeLayer.visible
         onActivated: notesPopup.open()
     }
 
     Shortcut {
         sequence: "Ctrl+D"
+        enabled: !welcomeLayer.visible
         onActivated: discoveryPopup.open()
     }
 
     Shortcut {
         sequence: "Ctrl+T"
+        enabled: !welcomeLayer.visible
         onActivated: teamBoardPopup.open()
     }
 
     Shortcut {
         sequence: "Ctrl+F"
+        enabled: !welcomeLayer.visible
         onActivated: searchPopup.open()
     }
 
     Shortcut {
         sequence: "Ctrl+P"
+        enabled: !welcomeLayer.visible
         onActivated: progressPopup.open()
     }
 
     Shortcut {
         sequence: "F1"
+        enabled: !welcomeLayer.visible
         onActivated: tourPopup.open()
+    }
+
+    Shortcut {
+        sequence: "F2"
+        onActivated: window.openWelcome()
     }
 
     Connections {

@@ -279,14 +279,6 @@ TOPIC_ALIASES = {
 }
 
 LEARNING_GOALS = {
-    "Balanced digital foundations": (
-        ("AWS & Cloud", "AWS Global Infrastructure"),
-        ("AI / ML", "How Models Learn"),
-        ("Cybersecurity & Digital Trust", "The Principle of Least Privilege"),
-        ("AWS & Cloud", "Cloud Cost Fundamentals"),
-        ("AI / ML", "Evaluating AI Systems"),
-        ("Cybersecurity & Digital Trust", "Incident Response Basics"),
-    ),
     "Build resilient cloud skills": tuple(
         ("AWS & Cloud", lesson.title) for lesson in LESSONS["AWS & Cloud"]
     ),
@@ -297,6 +289,12 @@ LEARNING_GOALS = {
         ("Cybersecurity & Digital Trust", lesson.title)
         for lesson in LESSONS["Cybersecurity & Digital Trust"]
     ),
+}
+
+TOPIC_LEARNING_GOALS = {
+    "AWS & Cloud": "Build resilient cloud skills",
+    "AI / ML": "Use AI responsibly",
+    "Cybersecurity & Digital Trust": "Strengthen digital trust",
 }
 
 LEARNING_GOAL_SUMMARIES = {
@@ -457,6 +455,10 @@ class LearningService(QObject):
             self._topic = "AWS & Cloud"
         self._lesson_index = self.store.lesson_index(self._topic) % len(LESSONS[self._topic])
         self._learning_goal = self.store.learning_goal()
+        if self._learning_goal == "Balanced digital foundations":
+            self._learning_goal = TOPIC_LEARNING_GOALS[self._topic]
+            self.store.set_learning_goal(self._learning_goal)
+            self.store.set_learning_goal_position(0)
         if self._learning_goal not in LEARNING_GOALS:
             self._learning_goal = ""
         self._goal_position = 0
@@ -469,6 +471,7 @@ class LearningService(QObject):
                 self._topic = goal_topic
                 self._lesson_index = goal_index
         self._reduced_motion = self.store.reduced_motion()
+        self._welcome_seen = self.store.welcome_seen()
         self._discovery_offset = 0
         self._search_query = ""
         self._tour_step = 0
@@ -538,11 +541,10 @@ class LearningService(QObject):
     def _search_results(self) -> list[tuple[str, str]]:
         query = self._search_query.strip().casefold()
         results = []
-        for topic, lessons in LESSONS.items():
-            for lesson in lessons:
-                searchable = f"{topic} {lesson.title} {lesson.description}".casefold()
-                if not query or query in searchable:
-                    results.append((topic, lesson.title))
+        for lesson in LESSONS[self._topic]:
+            searchable = f"{self._topic} {lesson.title} {lesson.description}".casefold()
+            if not query or query in searchable:
+                results.append((self._topic, lesson.title))
         return results
 
     @staticmethod
@@ -628,6 +630,10 @@ class LearningService(QObject):
         return list(LEARNING_GOALS)
 
     @Property(str, notify=changed)
+    def defaultLearningGoal(self) -> str:
+        return TOPIC_LEARNING_GOALS[self._topic]
+
+    @Property(str, notify=changed)
     def learningGoal(self) -> str:
         return self._learning_goal
 
@@ -655,6 +661,10 @@ class LearningService(QObject):
     @Property(bool, notify=changed)
     def reducedMotion(self) -> bool:
         return self._reduced_motion
+
+    @Property(bool, notify=changed)
+    def welcomeSeen(self) -> bool:
+        return self._welcome_seen
 
     @Property(str, notify=changed)
     def dailyDiscoveryDate(self) -> str:
@@ -810,20 +820,22 @@ class LearningService(QObject):
 
     @Slot(str)
     def selectTopic(self, topic: str) -> None:
-        if topic in LESSONS and (topic != self._topic or self._learning_goal):
-            self._learning_goal = ""
-            self._goal_position = 0
-            self.store.set_learning_goal("")
-            self.store.set_learning_goal_position(0)
-            self._topic = topic
-            self._lesson_index = self.store.lesson_index(topic) % len(LESSONS[topic])
-            self._resume_topic = self._topic
-            self._resume_lesson_index = self._lesson_index
-            self._review_mode = False
-            self._quiz_passed = False
-            self.store.set_selected_topic(topic)
-            self._load_lesson_tools()
-            self.changed.emit()
+        if topic not in LESSONS:
+            return
+        self._learning_goal = ""
+        self._goal_position = 0
+        self.store.set_learning_goal("")
+        self.store.set_learning_goal_position(0)
+        self._topic = topic
+        self._lesson_index = self.store.lesson_index(topic) % len(LESSONS[topic])
+        self._resume_topic = self._topic
+        self._resume_lesson_index = self._lesson_index
+        self._review_mode = False
+        self._quiz_passed = False
+        self._search_query = ""
+        self.store.set_selected_topic(topic)
+        self._load_lesson_tools()
+        self.changed.emit()
 
     @Slot()
     def nextLesson(self) -> None:
@@ -941,6 +953,14 @@ class LearningService(QObject):
         self.changed.emit()
 
     @Slot()
+    def completeWelcome(self) -> None:
+        if self._welcome_seen:
+            return
+        self._welcome_seen = True
+        self.store.set_welcome_seen(True)
+        self.changed.emit()
+
+    @Slot()
     def nextDiscovery(self) -> None:
         self._discovery_offset = (self._discovery_offset + 1) % len(DISCOVERY_ITEMS)
         self.changed.emit()
@@ -992,6 +1012,7 @@ class LearningService(QObject):
         self._xp = 0
         self._streak = 0
         self._reduced_motion = reduced_motion
+        self._welcome_seen = False
         if reduced_motion:
             self.store.set_reduced_motion(True)
         self._load_lesson_tools()

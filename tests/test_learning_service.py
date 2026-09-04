@@ -118,17 +118,17 @@ def test_due_review_uses_alternate_recall_and_updates_mastery(
 
 def test_learning_goal_sequences_curated_lessons(tmp_path: Path, monkeypatch) -> None:
     service = make_service(tmp_path, monkeypatch)
-    service.selectLearningGoal("Balanced digital foundations")
+    service.selectLearningGoal("Build resilient cloud skills")
 
     assert service.goalActive
-    assert service.learningGoal == "Balanced digital foundations"
+    assert service.learningGoal == "Build resilient cloud skills"
     assert service.title == "AWS Global Infrastructure"
-    assert service.goalProgressText == "Flash 1 of 6"
+    assert service.goalProgressText == "Flash 1 of 5"
 
     service.nextLesson()
-    assert service.topic == "AI / ML"
-    assert service.title == "How Models Learn"
-    assert service.goalProgressText == "Flash 2 of 6"
+    assert service.topic == "AWS & Cloud"
+    assert service.title == "The Shared Responsibility Model"
+    assert service.goalProgressText == "Flash 2 of 5"
 
     resumed = make_service(tmp_path, monkeypatch)
     assert resumed.learningGoal == service.learningGoal
@@ -160,6 +160,17 @@ def test_reduced_motion_preference_persists(tmp_path: Path, monkeypatch) -> None
 
     resumed = make_service(tmp_path, monkeypatch)
     assert resumed.reducedMotion
+
+
+def test_first_run_welcome_is_completed_and_persists(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    assert not service.welcomeSeen
+
+    service.completeWelcome()
+    assert service.welcomeSeen
+
+    resumed = make_service(tmp_path, monkeypatch)
+    assert resumed.welcomeSeen
 
 
 def test_daily_discovery_is_complete_and_can_advance(
@@ -202,14 +213,68 @@ def test_team_board_demo_exposes_complete_sample_metrics(
 
 def test_search_opens_matching_lesson(tmp_path: Path, monkeypatch) -> None:
     service = make_service(tmp_path, monkeypatch)
-    assert service.searchResultCount == 15
+    assert service.searchResultCount == 5
+    assert all(item.startswith("AWS & Cloud|") for item in service.searchLessonItems)
 
+    service.searchLessons("zero trust")
+    assert service.searchResultCount == 0
+
+    service.selectTopic("Cybersecurity & Digital Trust")
     service.searchLessons("zero trust")
     assert service.searchResultCount == 1
     assert "Cybersecurity & Digital Trust|Zero Trust Foundations" in service.searchLessonItems
     service.openSearchResult(0)
     assert service.topic == "Cybersecurity & Digital Trust"
     assert service.title == "Zero Trust Foundations"
+
+
+def test_selected_topic_owns_next_lesson_sequence(tmp_path: Path, monkeypatch) -> None:
+    service = make_service(tmp_path, monkeypatch)
+    service.selectLearningGoal("Use AI responsibly")
+    service.nextLesson()
+    assert service.topic == "AI / ML"
+
+    service.selectTopic("AWS & Cloud")
+    assert not service.goalActive
+    for _ in range(8):
+        assert service.topic == "AWS & Cloud"
+        service.nextLesson()
+
+
+def test_every_learning_goal_maps_to_its_own_category(
+    tmp_path: Path, monkeypatch
+) -> None:
+    expected = {
+        "Build resilient cloud skills": ("AWS & Cloud", "AWS Global Infrastructure"),
+        "Use AI responsibly": ("AI / ML", "How Models Learn"),
+        "Strengthen digital trust": (
+            "Cybersecurity & Digital Trust",
+            "The Principle of Least Privilege",
+        ),
+    }
+    service = make_service(tmp_path, monkeypatch)
+    assert service.learningGoals == list(expected)
+    for goal, (topic, first_title) in expected.items():
+        service.selectLearningGoal(goal)
+        assert service.learningGoal == goal
+        assert service.topic == topic
+        assert service.title == first_title
+        for _ in range(7):
+            service.nextLesson()
+            assert service.topic == topic
+
+
+def test_legacy_balanced_goal_migrates_to_selected_category(
+    tmp_path: Path, monkeypatch
+) -> None:
+    store = ExcelService(tmp_path / "FlashTile.xlsx")
+    store.set_selected_topic("AI / ML")
+    store.set_learning_goal("Balanced digital foundations")
+    service = make_service(tmp_path, monkeypatch)
+
+    assert service.learningGoal == "Use AI responsibly"
+    assert service.topic == "AI / ML"
+    assert service.title == "How Models Learn"
 
 
 def test_progress_badges_and_tour(tmp_path: Path, monkeypatch) -> None:
@@ -237,6 +302,7 @@ def test_demo_reset_preserves_motion_preference_and_creates_backup(
     tmp_path: Path, monkeypatch
 ) -> None:
     service = make_service(tmp_path, monkeypatch)
+    service.completeWelcome()
     service.setReducedMotion(True)
     service.toggleBookmark()
     service.saveLessonNote("Demo note")
@@ -251,3 +317,4 @@ def test_demo_reset_preserves_motion_preference_and_creates_backup(
     assert service.noteCount == 0
     assert service.reducedMotion
     assert service.topic == "AWS & Cloud"
+    assert not service.welcomeSeen

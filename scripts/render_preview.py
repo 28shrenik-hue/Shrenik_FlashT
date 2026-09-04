@@ -41,6 +41,11 @@ def main() -> int:
             "demoResetPopup",
         ),
     )
+    parser.add_argument(
+        "--welcome-goals",
+        action="store_true",
+        help="Render the second onboarding step for Learning Goals",
+    )
     args = parser.parse_args()
 
     with TemporaryDirectory() as folder:
@@ -57,6 +62,12 @@ def main() -> int:
             if not engine.rootObjects():
                 raise RuntimeError("QML did not create a window")
             window = engine.rootObjects()[0]
+            if args.welcome_goals:
+                continue_button = window.findChild(QObject, "welcomeContinueButton")
+                if continue_button is None:
+                    raise RuntimeError("Welcome Continue button not found")
+                QMetaObject.invokeMethod(continue_button, "click")
+                app.processEvents()
             if args.popup:
                 popup = window.findChild(QObject, args.popup)
                 if popup is None:
