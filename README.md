@@ -49,6 +49,14 @@ FlashTile provides educational content and is not legal, investment, compliance,
 
 Control-click `scripts/run_mac.command`, choose **Open**, and allow the first-time dependency installation.
 
+The checked-in transfer package for this branch is:
+
+```text
+release/FlashTile-v1.0.0-rc16-mac-source.zip
+```
+
+Do not use an RC15 package when testing the team-feedback topics.
+
 Or run:
 
 ```bash
