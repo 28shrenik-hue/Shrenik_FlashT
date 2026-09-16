@@ -35,6 +35,11 @@ ApplicationWindow {
     readonly property string breathPhase: breathPosition < 4 ? "Inhale" : (breathPosition < 6 ? "Hold" : "Exhale")
     readonly property int breathCount: breathPosition < 4 ? 4 - breathPosition : (breathPosition < 6 ? 6 - breathPosition : 12 - breathPosition)
 
+    Component.onCompleted: {
+        if (!learningService.reducedMotion)
+            Qt.callLater(function() { welcomeIntro.restart() })
+    }
+
     function moveToStep(step, message) {
         if (learningService.reducedMotion) {
             flowStep = step
@@ -61,6 +66,20 @@ ApplicationWindow {
             : learningService.defaultLearningGoal
         welcomePreview = true
         welcomeLayer.forceActiveFocus()
+        if (!learningService.reducedMotion)
+            welcomeIntro.restart()
+    }
+
+    function showWelcomeStep(step) {
+        welcomeStep = step
+        if (learningService.reducedMotion) {
+            welcomeContent.transitionOpacity = 1
+            welcomeContent.transitionOffset = 0
+            return
+        }
+        welcomeContent.transitionOpacity = 0.12
+        welcomeContent.transitionOffset = step === 1 ? 10 : -10
+        welcomeStepReveal.restart()
     }
 
     function startLearning() {
@@ -1078,8 +1097,11 @@ ApplicationWindow {
         Accessible.description: "An introduction to the FlashTile learning companion"
 
         onVisibleChanged: {
-            if (visible)
+            if (visible) {
                 forceActiveFocus()
+                if (!learningService.reducedMotion)
+                    welcomeIntro.restart()
+            }
         }
         Keys.onEscapePressed: function(event) {
             if (window.onboardingComplete) {
@@ -1171,7 +1193,11 @@ ApplicationWindow {
             transformOrigin: Item.Center
             property real tiltX: 0
             property real tiltY: 0
-            scale: welcomeHover.hovered && !learningService.reducedMotion ? 1.012 : 1
+            property real revealScale: learningService.reducedMotion ? 1 : 0.972
+            property real revealOpacity: learningService.reducedMotion ? 1 : 0
+            property real revealOffset: learningService.reducedMotion ? 0 : 14
+            scale: revealScale * (welcomeHover.hovered && !learningService.reducedMotion ? 1.012 : 1)
+            opacity: revealOpacity
 
             Behavior on scale { enabled: !learningService.reducedMotion; NumberAnimation { duration: 170; easing.type: Easing.OutCubic } }
             Behavior on tiltX { enabled: !learningService.reducedMotion; SpringAnimation { spring: 3; damping: 0.35 } }
@@ -1179,6 +1205,9 @@ ApplicationWindow {
             Behavior on border.color { ColorAnimation { duration: 180 } }
 
             transform: [
+                Translate {
+                    y: welcomeCard.revealOffset
+                },
                 Rotation {
                     origin.x: welcomeCard.width / 2
                     origin.y: welcomeCard.height / 2
@@ -1217,9 +1246,14 @@ ApplicationWindow {
             }
 
             ColumnLayout {
+                id: welcomeContent
                 anchors.fill: parent
                 anchors.margins: 22
                 spacing: 8
+                property real transitionOpacity: 1
+                property real transitionOffset: 0
+                opacity: transitionOpacity
+                transform: Translate { y: welcomeContent.transitionOffset }
 
                 Item {
                     Layout.fillWidth: true
@@ -1227,6 +1261,7 @@ ApplicationWindow {
                     visible: window.welcomeStep === 0
                     Image {
                         id: welcomeLogo
+                        objectName: "welcomeLogo"
                         anchors.centerIn: parent
                         width: 150
                         height: 136
@@ -1235,12 +1270,10 @@ ApplicationWindow {
                         fillMode: Image.PreserveAspectCrop
                         smooth: true
                         mipmap: true
-                        SequentialAnimation on scale {
-                            running: welcomeLayer.visible && !learningService.reducedMotion
-                            loops: Animation.Infinite
-                            NumberAnimation { from: 1; to: 1.025; duration: 1400; easing.type: Easing.InOutSine }
-                            NumberAnimation { from: 1.025; to: 1; duration: 1400; easing.type: Easing.InOutSine }
-                        }
+                        property real introScale: learningService.reducedMotion ? 1 : 0.91
+                        property real introOpacity: learningService.reducedMotion ? 1 : 0
+                        scale: introScale
+                        opacity: introOpacity
                     }
                 }
 
@@ -1542,7 +1575,9 @@ ApplicationWindow {
                             Layout.preferredHeight: 46
                             text: "Back"
                             activeFocusOnTab: true
-                            onClicked: window.welcomeStep = 0
+                            onClicked: window.showWelcomeStep(0)
+                            scale: down && !learningService.reducedMotion ? 0.985 : 1
+                            Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
                             background: Rectangle {
                                 radius: 13
                                 color: parent.hovered ? "#203454" : "#152746"
@@ -1568,6 +1603,8 @@ ApplicationWindow {
                             Accessible.name: "Begin Learning"
                             Accessible.description: "Save the selected learning goal and open its first lesson"
                             onClicked: window.startLearning()
+                            scale: down && !learningService.reducedMotion ? 0.985 : 1
+                            Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
                             background: Rectangle {
                                 radius: 14
                                 gradient: Gradient {
@@ -1602,7 +1639,9 @@ ApplicationWindow {
                     activeFocusOnTab: true
                     Accessible.name: "Continue to Learning Goals"
                     Accessible.description: "Choose what you want to learn"
-                    onClicked: window.welcomeStep = 1
+                    onClicked: window.showWelcomeStep(1)
+                    scale: down && !learningService.reducedMotion ? 0.985 : 1
+                    Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
                     background: Rectangle {
                         radius: 14
                         gradient: Gradient {
@@ -2981,6 +3020,52 @@ ApplicationWindow {
         function onCelebration(value) {
             feedbackText = value
             feedbackColor = value.indexOf("+") === 0 ? "#68EDC6" : "#9FB0CF"
+        }
+    }
+
+    ParallelAnimation {
+        id: welcomeIntro
+        objectName: "welcomeIntro"
+        running: false
+
+        NumberAnimation {
+            target: welcomeCard; property: "revealOpacity"
+            from: 0; to: 1; duration: 280; easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: welcomeCard; property: "revealScale"
+            from: 0.972; to: 1; duration: 420; easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: welcomeCard; property: "revealOffset"
+            from: 14; to: 0; duration: 420; easing.type: Easing.OutCubic
+        }
+        SequentialAnimation {
+            PauseAnimation { duration: 90 }
+            ParallelAnimation {
+                NumberAnimation {
+                    target: welcomeLogo; property: "introOpacity"
+                    from: 0; to: 1; duration: 260; easing.type: Easing.OutCubic
+                }
+                NumberAnimation {
+                    target: welcomeLogo; property: "introScale"
+                    from: 0.91; to: 1; duration: 360; easing.type: Easing.OutBack
+                }
+            }
+        }
+    }
+
+    ParallelAnimation {
+        id: welcomeStepReveal
+        objectName: "welcomeStepReveal"
+        running: false
+        NumberAnimation {
+            target: welcomeContent; property: "transitionOpacity"
+            from: 0.12; to: 1; duration: 220; easing.type: Easing.OutCubic
+        }
+        NumberAnimation {
+            target: welcomeContent; property: "transitionOffset"
+            to: 0; duration: 260; easing.type: Easing.OutCubic
         }
     }
 

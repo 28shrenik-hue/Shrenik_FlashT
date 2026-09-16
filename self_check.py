@@ -172,6 +172,9 @@ def check_qml() -> None:
                 )
             app.processEvents()
             welcome = window.findChild(QObject, "welcomeLayer")
+            welcome_logo = window.findChild(QObject, "welcomeLogo")
+            welcome_intro = window.findChild(QObject, "welcomeIntro")
+            welcome_step_reveal = window.findChild(QObject, "welcomeStepReveal")
             continue_button = window.findChild(QObject, "welcomeContinueButton")
             start_button = window.findChild(QObject, "startLearningButton")
             custom_input = window.findChild(QObject, "customGoalInput")
@@ -184,6 +187,9 @@ def check_qml() -> None:
                 item is None
                 for item in (
                     welcome,
+                    welcome_logo,
+                    welcome_intro,
+                    welcome_step_reveal,
                     continue_button,
                     start_button,
                     custom_input,

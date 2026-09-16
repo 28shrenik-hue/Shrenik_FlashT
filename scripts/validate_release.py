@@ -15,7 +15,7 @@ from services.excel_service import ExcelService
 from version import __version__
 
 
-EXPECTED_VERSION = "1.0.0-rc17"
+EXPECTED_VERSION = "1.0.0-rc18"
 EXPECTED_PREPARED = {
     "Risk & Decision Making": "Risk-Informed Decision Making",
     "BCBS 239 & Data Governance": "BCBS 239 & Data Governance",
@@ -50,7 +50,7 @@ def check_source_tree() -> None:
     if sum(len(items) for items in learning_service.LESSONS.values()) != 25:
         raise RuntimeError("The release must contain twenty-five reviewed lessons")
     if learning_service.PREPARED_LEARNING_TOPICS.keys() != EXPECTED_PREPARED.keys():
-        raise RuntimeError("Prepared learning-topic labels do not match RC17")
+        raise RuntimeError("Prepared learning-topic labels do not match RC18")
 
 
 def check_learning_and_persistence() -> None:
@@ -61,7 +61,7 @@ def check_learning_and_persistence() -> None:
         try:
             learning = learning_service.LearningService()
             if learning.appVersion != EXPECTED_VERSION:
-                raise RuntimeError("The UI service does not expose the RC17 version")
+                raise RuntimeError("The UI service does not expose the RC18 version")
             if len(learning.topLearningItems) != 9:
                 raise RuntimeError("Main learning selector must contain nine choices")
             for subject, expected_title in EXPECTED_PREPARED.items():

@@ -6,7 +6,7 @@ FlashTile is a small, always-on-top desktop micro-learning tile built with Pytho
 PySide6/QML, and a replaceable Excel persistence layer. It intentionally does not
 expand into a conventional full-screen application.
 
-## v1.0 RC17 release-candidate experience
+## v1.0 RC18 release-candidate experience
 
 - One compact fixed 410 × 690 floating tile
 - Draggable from the FlashTile title/header, with the last valid screen position remembered
@@ -14,6 +14,7 @@ expand into a conventional full-screen application.
 - Welcome → Learning Goal → Learning sequence on every fresh application launch
 - Original 3D liquid-glass FlashTile logo integrated into the compact header
 - Premium glass styling and mouse-position swivel
+- Calm one-time startup choreography and compact container transitions that respect reduced-motion mode
 - Fifteen flagship lessons across AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust
 - Three category-aligned learning-goal paths that sequence relevant curated lessons locally
 - An editable Prepared Learning Topics selector with six visible team-requested subjects
@@ -52,10 +53,10 @@ Control-click `scripts/run_mac.command`, choose **Open**, and allow the first-ti
 The checked-in transfer package for this branch is:
 
 ```text
-release/FlashTile-v1.0.0-rc17-mac-source.zip
+release/FlashTile-v1.0.0-rc18-mac-source.zip
 ```
 
-Do not use an RC15 or RC16 package when testing RC17 stabilization.
+Do not use an older release-candidate package when testing RC18.
 
 Or run:
 
@@ -94,7 +95,7 @@ scripts\build_windows.bat
 The no-Python-required package is created at:
 
 ```text
-release\FlashTile-v1.0.0-rc17-win64.zip
+release\FlashTile-v1.0.0-rc18-win64.zip
 ```
 
 The same build can run from the **Windows release package** GitHub Actions

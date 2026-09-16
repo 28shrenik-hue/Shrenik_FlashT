@@ -28,10 +28,12 @@
 - [x] Six prepared team-requested learning subjects route to exact lessons
 - [x] Prediction-free custom learning-goal input and local request queue
 - [x] Draggable tile with validated saved-position persistence
-- [x] Visible RC17 version identification
+- [x] Visible RC18 version identification
 - [x] Standalone release validator included in cross-platform CI
-- [x] RC17 macOS source package integrity and contents validated
+- [x] Professional one-time widget entrance and compact onboarding transition
+- [x] Reduced-motion fallback for all new startup choreography
+- [x] RC18 macOS source package integrity and contents validated
 - [ ] User acceptance pass on macOS
 - [ ] User acceptance pass on Windows
-- [ ] RC17 Windows artifact built and downloaded from a Windows runner
+- [ ] RC18 Windows artifact built and downloaded from a Windows runner
 - [ ] Final v1.0 version and release notes

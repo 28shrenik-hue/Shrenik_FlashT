@@ -217,7 +217,7 @@ def test_reduced_motion_preference_persists(tmp_path: Path, monkeypatch) -> None
 
 def test_first_run_welcome_is_completed_and_persists(tmp_path: Path, monkeypatch) -> None:
     service = make_service(tmp_path, monkeypatch)
-    assert service.appVersion == "1.0.0-rc17"
+    assert service.appVersion == "1.0.0-rc18"
     assert not service.welcomeSeen
 
     service.completeWelcome()

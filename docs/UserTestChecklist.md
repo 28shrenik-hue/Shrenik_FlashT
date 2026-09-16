@@ -1,4 +1,4 @@
-# FlashTile v1.0 RC17 User Test Checklist
+# FlashTile v1.0 RC18 User Test Checklist
 
 Run `START_FLASHTILE_MAC.command` on macOS or `scripts\run_windows.bat` on
 Windows, then verify:
@@ -11,7 +11,10 @@ Windows, then verify:
 - The liquid-glass logo, wordmark, XP, streak, and close control are visible.
 - The tile can be dragged and remains above ordinary windows.
 - After dragging and relaunching, the tile returns to its last valid screen position.
-- The Welcome and Learning Goal steps display `1.0.0-rc17`.
+- The Welcome and Learning Goal steps display `1.0.0-rc18`.
+- The Welcome Tile enters once with a short, calm reveal; the logo does not pulse continuously.
+- Continue and Back use a compact content transition with no full-screen expansion.
+- Reduced-motion mode removes the startup and content-transition choreography.
 
 ## Learning flow
 

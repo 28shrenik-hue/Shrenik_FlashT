@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0-rc18 - Professional Widget Motion
+
+- Added a calm one-time 420 ms entrance for the fixed 410 x 690 Welcome Tile.
+- Added a restrained logo settle instead of a perpetual pulse.
+- Added compact 260 ms container transitions between Welcome and Learning Goals.
+- Added tactile press feedback to the primary onboarding actions.
+- Preserved the existing glass treatment, pointer-driven swivel, draggable tile, learning flows, and all assets.
+- Kept every new animation optional through the existing reduced-motion preference.
+
 ## 1.0.0-rc17 — User Acceptance & Stabilization
 
 - Added visible release-version identification to both onboarding steps.
