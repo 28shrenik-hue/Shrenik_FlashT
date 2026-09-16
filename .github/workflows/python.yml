@@ -20,5 +20,10 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
       - run: python -m pytest -q
-      - run: python self_check.py
+      - name: Run desktop QML self-check
+        if: runner.os != 'Linux'
+        run: python self_check.py
+      - name: Run Linux service self-check
+        if: runner.os == 'Linux'
+        run: python self_check.py --quick
       - run: python scripts/validate_release.py
