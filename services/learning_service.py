@@ -6,6 +6,7 @@ from PySide6.QtCore import Property, QObject, Signal, Slot
 
 from models.lesson import Lesson
 from services.excel_service import ExcelService
+from version import __version__
 
 
 LESSONS = {
@@ -712,6 +713,10 @@ class LearningService(QObject):
 
     def _lesson(self) -> Lesson:
         return LESSONS[self._topic][self._lesson_index]
+
+    @Property(str, constant=True)
+    def appVersion(self) -> str:
+        return __version__
 
     def _discovery(self) -> dict[str, str]:
         index = (date.today().toordinal() + self._discovery_offset) % len(

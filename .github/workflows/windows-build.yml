@@ -3,6 +3,8 @@ name: Windows release package
 on:
   workflow_dispatch:
   push:
+    branches:
+      - "feature/rc17-stabilization"
     tags:
       - "v*"
 
@@ -19,6 +21,6 @@ jobs:
         run: scripts\build_windows.bat
       - uses: actions/upload-artifact@v4
         with:
-          name: FlashTile-v1.0.0-rc15-win64
-          path: release/FlashTile-v1.0.0-rc15-win64.zip
+          name: FlashTile-v1.0.0-rc17-win64
+          path: release/FlashTile-v1.0.0-rc17-win64.zip
           if-no-files-found: error

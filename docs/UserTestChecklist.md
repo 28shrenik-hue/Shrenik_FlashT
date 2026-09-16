@@ -1,4 +1,4 @@
-# FlashTile v1.0 User Test Checklist
+# FlashTile v1.0 RC17 User Test Checklist
 
 Run `START_FLASHTILE_MAC.command` on macOS or `scripts\run_windows.bat` on
 Windows, then verify:
@@ -10,10 +10,17 @@ Windows, then verify:
 - Its size remains 410 × 690 and it never expands full screen.
 - The liquid-glass logo, wordmark, XP, streak, and close control are visible.
 - The tile can be dragged and remains above ordinary windows.
+- After dragging and relaunching, the tile returns to its last valid screen position.
+- The Welcome and Learning Goal steps display `1.0.0-rc17`.
 
 ## Learning flow
 
-- Topic selection works for AWS & Cloud, AI / ML, and Cybersecurity & Digital Trust.
+- The main dropdown contains the three flagship areas and all six prepared subjects.
+- Each prepared subject opens its exact named lesson rather than a generic first lesson.
+- The six prepared subjects are Risk & Decision Making; BCBS 239 & Data Governance; Human-in-the-loop AI controls; Issues & Errors Management; Legal-obligation impact assessments; and Alternative investments and portfolio diversification.
+- Typing a custom learning goal displays no predictive suggestions or auto-completion.
+- A recognized custom request starts the correct prepared path.
+- An unavailable request is saved locally and a duplicate is not added twice.
 - Core Concept advances to Practical Scenario, Go Deeper, and Knowledge Check.
 - Back controls return to the correct stage.
 - An incorrect answer shows feedback and allows retry.
@@ -47,6 +54,7 @@ Windows, then verify:
 ## Persistence and recovery
 
 - XP, streak, topic, lesson position, bookmarks, notes, and mastery survive relaunch.
+- Topic requests and the selected window position survive relaunch.
 - `~/.flashtile/backups/` contains a dated workbook backup after a change.
 - `~/.flashtile/logs/FlashTile.log` records startup.
 

@@ -1524,6 +1524,14 @@ ApplicationWindow {
                         horizontalAlignment: Text.AlignHCenter
                     }
 
+                    Text {
+                        Layout.fillWidth: true
+                        text: "FlashTile " + learningService.appVersion
+                        color: "#536988"
+                        font.pixelSize: 8
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
                     Item { Layout.fillHeight: true }
 
                     RowLayout {
@@ -1615,7 +1623,10 @@ ApplicationWindow {
                 Text {
                     Layout.fillWidth: true
                     visible: window.welcomeStep === 0
-                    text: window.onboardingComplete ? "Press Esc to return • F2 opens this introduction" : "A few focused minutes is enough to begin."
+                    text: (window.onboardingComplete
+                        ? "Press Esc to return • F2 opens this introduction"
+                        : "A few focused minutes is enough to begin.")
+                        + " • " + learningService.appVersion
                     color: "#7F96B8"
                     font.pixelSize: 10
                     horizontalAlignment: Text.AlignHCenter

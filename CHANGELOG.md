@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.0-rc17 — User Acceptance & Stabilization
+
+- Added visible release-version identification to both onboarding steps.
+- Added a standalone release validator covering source integrity, all six prepared learning routes, custom-topic request handling, duplicate prevention, and saved window position.
+- Added the release validator to macOS, Windows, and Linux continuous-integration checks.
+- Added automatic Windows packaging for the RC17 stabilization branch.
+- Updated the Windows artifact name and build output to RC17.
+- Expanded the user-acceptance checklist for all nine main learning choices, prediction-free custom input, prepared-topic routing, topic requests, and position persistence.
+- Preserved the approved 410 × 690 tile, glass treatment, swivel, and tile-first interaction.
+
 ## 1.0.0-rc16 — Custom Learning Requests
 
 - Added a compact, editable Prepared Learning Topics selector without changing the approved 410 × 690 tile.
