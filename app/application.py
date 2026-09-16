@@ -4,12 +4,13 @@ import logging
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QUrl
+from PySide6.QtCore import QMetaObject, QObject, QUrl
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
 from services.learning_service import LearningService
 from services.logging_service import configure_logging
+from version import __version__
 
 
 LOGGER = logging.getLogger(__name__)
@@ -31,13 +32,18 @@ def _install_exception_logging() -> None:
 def run() -> int:
     log_file = configure_logging()
     _install_exception_logging()
-    LOGGER.info("Starting FlashTile; log=%s", log_file)
+    project_root = Path(__file__).resolve().parents[1]
+    LOGGER.info(
+        "Starting FlashTile %s; source=%s; log=%s",
+        __version__,
+        project_root,
+        log_file,
+    )
 
     app = QGuiApplication(sys.argv)
     app.setApplicationName("FlashTile")
     app.setOrganizationName("FlashTile Capstone")
 
-    project_root = Path(__file__).resolve().parents[1]
     icon_file = project_root / "assets" / "branding" / "FlashTile_3D_Logo.png"
     if icon_file.exists():
         app.setWindowIcon(QIcon(str(icon_file)))
@@ -59,6 +65,18 @@ def run() -> int:
     # Reuse a valid saved position on the primary display. Otherwise, place the
     # tile at its original upper-right starting location.
     window = engine.rootObjects()[0]
+    if not QMetaObject.invokeMethod(window, "openWelcome"):
+        LOGGER.warning("QML openWelcome was unavailable; applying safe properties")
+        window.setProperty("onboardingComplete", False)
+        window.setProperty("welcomePreview", True)
+        window.setProperty("welcomeStep", 0)
+    app.processEvents()
+    welcome_layer = window.findChild(QObject, "welcomeLayer")
+    LOGGER.info(
+        "Onboarding ready; welcomeVisible=%s welcomeStep=%s",
+        bool(welcome_layer.property("visible")) if welcome_layer else False,
+        window.property("welcomeStep"),
+    )
     screen = app.primaryScreen()
     if screen is not None:
         available = screen.availableGeometry()

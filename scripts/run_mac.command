@@ -14,6 +14,9 @@ if ! python3 -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 9) el
     echo "FlashTile requires Python 3.9 or newer."
     exit 1
 fi
+FLASH_VERSION="$(python3 -c 'from version import __version__; print(__version__)')"
+echo "Starting FlashTile ${FLASH_VERSION}"
+echo "Source: $(pwd)"
 if [ ! -x ".venv/bin/python" ]; then
     python3 -m venv .venv
 fi

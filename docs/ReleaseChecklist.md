@@ -32,6 +32,8 @@
 - [x] Standalone release validator included in cross-platform CI
 - [x] Professional one-time widget entrance and compact onboarding transition
 - [x] Reduced-motion fallback for all new startup choreography
+- [x] Application startup explicitly opens and logs the Welcome Tile state
+- [x] macOS launcher identifies the version and source folder before startup
 - [x] RC18 macOS source package integrity and contents validated
 - [ ] User acceptance pass on macOS
 - [ ] User acceptance pass on Windows

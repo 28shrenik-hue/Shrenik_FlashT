@@ -6,6 +6,9 @@
 - Added a restrained logo settle instead of a perpetual pulse.
 - Added compact 260 ms container transitions between Welcome and Learning Goals.
 - Added tactile press feedback to the primary onboarding actions.
+- Made the macOS startup path explicitly open and verify the Welcome Tile on every launch.
+- Added visible launcher output for the exact FlashTile version and source folder being started.
+- Restricted automated test discovery to the source test suite so extracted release copies cannot create duplicate-module failures.
 - Preserved the existing glass treatment, pointer-driven swivel, draggable tile, learning flows, and all assets.
 - Kept every new animation optional through the existing reduced-motion preference.
 

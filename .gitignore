@@ -6,6 +6,7 @@ __pycache__/
 rc*-check.png
 dist/
 build/
+release/*/
 *.spec
 !FlashTile.spec
 database/excel/*.xlsx
